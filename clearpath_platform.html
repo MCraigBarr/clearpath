@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClearPath — Healthcare Financial Decision Support</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=Roboto:wght@400;500&family=PT+Serif:ital@1&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --fp:'Inter Tight',system-ui,sans-serif;
+  --fs:'Roboto',sans-serif;
+  --fse:'PT Serif',Georgia,serif;
+  --pb:#007F91;--bb:#1797D7;--dn:#103454;
+  --py:#FFC532;--po:#E24301;--lg:#F1F2F3;--ag:#828889;--wh:#ffffff;
+}
+html,body{height:100%;overflow:hidden;}
+body{font-family:var(--fp);font-size:13px;color:var(--pb);background:#E8EAEC;display:flex;flex-direction:column;}
+
+/* ── TOP NAV BAR ── */
+.topnav{
+  height:52px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--dn) 0%,var(--pb) 55%,var(--bb) 100%);
+  display:flex;align-items:center;justify-content:space-between;padding:0 20px;
+  box-shadow:0 2px 8px rgba(16,52,84,.25);z-index:100;
+}
+.brand{display:flex;align-items:center;gap:10px;}
+.logomark{width:30px;height:30px;border-radius:6px;background:linear-gradient(135deg,var(--py),var(--po));display:flex;align-items:center;justify-content:center;font-family:var(--fp);font-size:12px;font-weight:600;color:#fff;}
+.brand-name{font-family:var(--fp);font-size:15px;font-weight:600;color:#fff;letter-spacing:-.02em;}
+.brand-tag{font-family:var(--fs);font-size:10px;color:rgba(255,255,255,.65);letter-spacing:.04em;text-transform:uppercase;}
+.topnav-right{display:flex;align-items:center;gap:16px;}
+.nav-util{font-family:var(--fs);font-size:12px;color:rgba(255,255,255,.8);cursor:pointer;display:flex;align-items:center;gap:5px;}
+.nav-util:hover{color:#fff;}
+.user-chip{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.15);border-radius:20px;padding:4px 12px 4px 4px;}
+.user-avatar{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,var(--py),var(--po));display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#fff;}
+.user-name{font-family:var(--fs);font-size:11px;color:#fff;}
+.alert-badge{background:var(--po);color:#fff;font-size:10px;font-weight:600;border-radius:10px;padding:2px 6px;font-family:var(--fp);}
+
+/* ── LAYOUT ── */
+.layout{display:flex;flex:1;overflow:hidden;}
+
+/* ── SIDE NAV ── */
+.sidenav{
+  width:220px;flex-shrink:0;background:var(--dn);
+  display:flex;flex-direction:column;overflow-y:auto;
+}
+.sidenav-section{padding:16px 12px 6px;font-family:var(--fs);font-size:10px;font-weight:500;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.08em;}
+.sidenav-item{
+  display:flex;align-items:center;gap:10px;padding:9px 14px;cursor:pointer;
+  font-family:var(--fs);font-size:12px;font-weight:500;color:rgba(255,255,255,.65);
+  border-left:3px solid transparent;transition:all .15s;
+}
+.sidenav-item:hover{background:rgba(255,255,255,.08);color:#fff;}
+.sidenav-item.active{background:rgba(23,151,215,.2);color:#fff;border-left-color:var(--py);}
+.sidenav-item .si-icon{width:16px;height:16px;flex-shrink:0;opacity:.7;}
+.sidenav-item.active .si-icon{opacity:1;}
+.sidenav-item .si-badge{margin-left:auto;background:var(--po);color:#fff;font-size:9px;font-weight:600;border-radius:8px;padding:1px 5px;font-family:var(--fp);}
+.sidenav-item .si-badge.yellow{background:var(--py);color:var(--dn);}
+.sidenav-divider{height:1px;background:rgba(255,255,255,.08);margin:8px 14px;}
+.sidenav-footer{margin-top:auto;padding:14px;border-top:1px solid rgba(255,255,255,.08);}
+.sidenav-footer-text{font-family:var(--fs);font-size:10px;color:rgba(255,255,255,.3);}
+
+/* ── MAIN CONTENT ── */
+.main{flex:1;overflow-y:auto;background:#F0F2F4;}
+.page{display:none;padding:20px;min-height:100%;}
+.page.active{display:block;}
+
+/* ── PAGE HEADER ── */
+.page-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;}
+.page-title{font-family:var(--fp);font-size:18px;font-weight:600;letter-spacing:-.02em;color:var(--dn);}
+.page-sub{font-family:var(--fs);font-size:12px;color:var(--ag);margin-top:2px;}
+.page-actions{display:flex;gap:8px;align-items:center;}
+
+/* ── CARDS ── */
+.card{background:#fff;border:1px solid #E0E3E5;border-radius:10px;padding:14px 16px;margin-bottom:14px;}
+.card-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.ct{font-family:var(--fs);font-size:10px;font-weight:500;color:var(--ag);text-transform:uppercase;letter-spacing:.06em;}
+
+/* ── GRIDS ── */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+.four{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px;}
+.five{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-bottom:14px;}
+
+/* ── METRIC CARDS ── */
+.mc{background:var(--lg);border-radius:8px;padding:12px 14px;border-left:3px solid var(--pb);}
+.mc.y{border-left-color:var(--py);}
+.mc.o{border-left-color:var(--po);}
+.mc.b{border-left-color:var(--bb);}
+.ml{font-family:var(--fs);font-size:10px;color:var(--ag);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em;}
+.mv{font-family:var(--fp);font-size:20px;font-weight:600;letter-spacing:-.02em;color:var(--dn);}
+.md{font-family:var(--fs);font-size:11px;margin-top:3px;}
+.mn{font-family:var(--fs);font-size:11px;margin-top:4px;color:var(--ag);}
+.up{color:#1D9E75;}.dn2{color:var(--po);}.am{color:#BA7517;}
+.vp{color:#1D9E75;font-weight:500;}.vn{color:var(--po);font-weight:500;}
+
+/* ── KPI STRIP ── */
+.kpi-strip{display:flex;border-radius:10px;overflow:hidden;margin-bottom:16px;box-shadow:0 2px 8px rgba(16,52,84,.12);}
+.kc{flex:1;padding:13px 14px;background:linear-gradient(135deg,var(--dn),var(--pb));text-align:center;border-right:1px solid rgba(255,255,255,.15);}
+.kc:last-child{border-right:none;}
+.kc.a{background:linear-gradient(135deg,var(--pb),var(--bb));}
+.kc.w{background:linear-gradient(135deg,var(--py),var(--po));}
+.kl{font-family:var(--fs);font-size:10px;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;}
+.kv{font-family:var(--fp);font-size:18px;font-weight:600;color:#fff;}
+.kd{font-family:var(--fs);font-size:10px;color:rgba(255,255,255,.75);margin-top:2px;}
+
+/* ── DASH NAV TABS ── */
+.tabnav{display:flex;gap:3px;flex-wrap:wrap;padding:5px;background:var(--lg);border-radius:8px;margin-bottom:16px;}
+.tn{font-family:var(--fs);padding:6px 12px;font-size:12px;font-weight:500;border:none;border-radius:6px;background:transparent;color:var(--ag);cursor:pointer;}
+.tn:hover{background:#fff;color:var(--pb);}
+.tn.active{background:#fff;color:var(--pb);font-weight:600;box-shadow:0 1px 3px rgba(0,127,145,.1);}
+
+/* ── SECTION TABS ── */
+.subtabs{display:inline-flex;gap:3px;padding:4px;background:var(--lg);border-radius:7px;margin-bottom:14px;}
+.st{font-family:var(--fs);padding:5px 10px;font-size:11px;font-weight:500;border:none;border-radius:5px;background:transparent;color:var(--ag);cursor:pointer;}
+.st.active{background:#fff;color:var(--pb);font-weight:600;}
+
+/* ── TABLE ── */
+table{width:100%;border-collapse:collapse;font-size:12px;}
+th{font-family:var(--fs);text-align:left;color:var(--ag);font-weight:500;padding:7px 8px;border-bottom:2px solid var(--lg);white-space:nowrap;font-size:10px;text-transform:uppercase;letter-spacing:.05em;}
+td{font-family:var(--fs);padding:7px 8px;border-bottom:1px solid var(--lg);vertical-align:middle;color:var(--pb);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:#F8FAFB;}
+tr.grand td{background:var(--lg);font-weight:600;border-top:2px solid #D0D4D5;color:var(--dn);}
+td strong{font-family:var(--fp);font-weight:600;color:var(--dn);}
+
+/* ── BADGES ── */
+.badge{font-family:var(--fs);display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:500;}
+.bg{background:#E1F5EE;color:#0F6E56;}.ba{background:#FFF4E0;color:#854F0B;}.br{background:#FEF0EC;color:var(--po);}.bb2{background:#E0F3FB;color:var(--pb);}.bgr{background:var(--lg);color:var(--ag);}
+
+/* ── BUTTONS ── */
+.btn{font-family:var(--fs);padding:6px 12px;font-size:12px;border:1px solid #C8CDCE;border-radius:6px;background:#fff;color:var(--pb);cursor:pointer;}
+.btn:hover{background:var(--lg);}
+.btn-p{background:linear-gradient(135deg,var(--pb),var(--bb));color:#fff;border:none;}
+.btn-y{background:linear-gradient(135deg,var(--py),var(--po));color:#fff;border:none;font-weight:600;}
+.ai-btn{font-family:var(--fs);display:inline-flex;align-items:center;gap:6px;padding:7px 13px;font-size:12px;font-weight:500;border:1px solid var(--bb);border-radius:6px;background:rgba(0,127,145,.06);color:var(--pb);cursor:pointer;margin-top:10px;}
+.ai-btn:hover{background:rgba(0,127,145,.12);}
+.ai-icon{width:14px;height:14px;background:linear-gradient(135deg,var(--pb),var(--bb));border-radius:3px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;}
+
+/* ── MISC ── */
+.cw{position:relative;width:100%;}
+select{font-family:var(--fs);padding:5px 8px;font-size:12px;border:1px solid #C8CDCE;border-radius:6px;background:#fff;color:var(--pb);cursor:pointer;}
+.legend{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:8px;font-size:11px;color:var(--ag);}
+.li{font-family:var(--fs);display:flex;align-items:center;gap:5px;}
+.ld{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
+.sqt{font-family:var(--fse);font-size:13px;font-style:italic;color:var(--ag);border-left:3px solid var(--py);padding:8px 12px;margin-bottom:14px;background:linear-gradient(90deg,rgba(255,197,50,.05),transparent);}
+.good{font-family:var(--fs);background:#E1F5EE;border-left:3px solid #1D9E75;padding:9px 13px;border-radius:0 8px 8px 0;font-size:12px;color:#0F6E56;margin-bottom:12px;}
+.abox{font-family:var(--fs);background:#FEF0EC;border-left:3px solid var(--po);padding:9px 13px;border-radius:0 8px 8px 0;font-size:12px;color:var(--po);margin-bottom:8px;}
+.bmark-row{display:flex;align-items:center;gap:8px;margin-bottom:9px;}
+.bmark-label{font-family:var(--fp);font-size:12px;font-weight:500;color:var(--dn);width:180px;flex-shrink:0;}
+.bmark-bar-wrap{flex:1;height:20px;background:var(--lg);border-radius:4px;overflow:hidden;position:relative;}
+.bmark-fill{font-family:var(--fp);height:100%;border-radius:4px;display:flex;align-items:center;padding-left:8px;font-size:11px;font-weight:600;color:#fff;}
+.bmark-marker{position:absolute;top:0;bottom:0;width:2px;background:var(--py);}
+.bmark-val{font-family:var(--fp);font-size:12px;font-weight:600;width:56px;text-align:right;color:var(--dn);}
+.bmark-nat{font-family:var(--fs);font-size:11px;color:var(--ag);width:52px;text-align:right;}
+.fac-card{border:1px solid #E4E6E7;border-radius:10px;padding:14px 16px;margin-bottom:10px;background:#fff;}
+.fac-card.tp{border-color:var(--pb);border-width:1.5px;}
+.fac-card.lp{border-color:var(--po);border-width:1.5px;}
+.frow{display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid var(--lg);}
+.frow:last-child{border-bottom:none;}
+.fl{font-family:var(--fs);color:var(--ag);}
+.fv{font-family:var(--fp);font-weight:500;color:var(--dn);}
+.alert-row{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--lg);}
+.alert-row:last-child{border-bottom:none;}
+.adot{width:9px;height:9px;border-radius:50%;margin-top:3px;flex-shrink:0;}
+.at{font-family:var(--fp);font-size:13px;font-weight:600;margin-bottom:3px;color:var(--dn);}
+.ab{font-family:var(--fs);font-size:12px;color:var(--ag);}
+
+/* ── COST ACCOUNTING TAB ── */
+.catab{display:none;}
+
+/* ── SERVICE LINE TAB ── */
+.sltab{display:none;}
+.sltab.active-sl{display:block;}
+
+/* ── PLATFORM PAGES ── */
+.coming-soon{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:400px;gap:12px;}
+.cs-icon{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--pb),var(--bb));display:flex;align-items:center;justify-content:center;}
+.cs-title{font-family:var(--fp);font-size:16px;font-weight:600;color:var(--dn);}
+.cs-sub{font-family:var(--fs);font-size:13px;color:var(--ag);text-align:center;max-width:340px;line-height:1.6;}
+.cs-badge{background:linear-gradient(135deg,var(--py),var(--po));color:#fff;font-family:var(--fp);font-size:11px;font-weight:600;padding:4px 12px;border-radius:12px;}
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<div class="topnav">
+  <div class="brand">
+    <div class="logomark">CP</div>
+    <div>
+      <div class="brand-name">ClearPath</div>
+      <div class="brand-tag">Healthcare Financial Decision Support</div>
+    </div>
+  </div>
+  <div class="topnav-right">
+    <div class="nav-util">
+      <svg width="14" height="14" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      Search
+    </div>
+    <div class="nav-util">
+      <svg width="14" height="14" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      Alerts <span class="alert-badge">4</span>
+    </div>
+    <div class="nav-util">
+      <svg width="14" height="14" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      Settings
+    </div>
+    <div class="user-chip">
+      <div class="user-avatar">JD</div>
+      <div class="user-name">J. Davidson, CFO</div>
+    </div>
+  </div>
+</div>
+
+<div class="layout">
+
+<!-- SIDE NAV -->
+<div class="sidenav">
+  <div class="sidenav-section">Platform</div>
+  <div class="sidenav-item active" onclick="navTo('dashboard',this)">
+    <svg class="si-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+    Executive Dashboard
+  </div>
+  <div class="sidenav-item" onclick="navTo('cost',this)">
+    <svg class="si-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+    Cost Accounting
+  </div>
+  <div class="sidenav-item" onclick="navTo('serviceline',this)">
+    <svg class="si-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    Service Line Analytics
+  </div>
+  <div class="sidenav-divider"></div>
+  <div class="sidenav-section">Reporting</div>
+  <div class="sidenav-item" onclick="navTo('reports',this)">
+    <svg class="si-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+    Integrated Reports
+  </div>
+  <div class="sidenav-item" onclick="navTo('board',this)">
+    <svg class="si-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+    Board Package
+    <span class="si-badge yellow">New</span>
+  </div>
+  <div class="sidenav-divider"></div>
+  <div class="sidenav-section">Analysis</div>
+  <div class="sidenav-item" onclick="navTo('benchmarks',this)">
+    <svg class="si-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+    Benchmarking
+  </div>
+  <div class="sidenav-item" onclick="navTo('forecast',this)">
+    <svg class="si-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+    Forecasting
+    <span class="si-badge yellow">Beta</span>
+  </div>
+  <div class="sidenav-item" onclick="navTo('ai',this)">
+    <svg class="si-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+    AI Advisor
+    <span class="si-badge">4</span>
+  </div>
+  <div class="sidenav-divider"></div>
+  <div class="sidenav-section">Admin</div>
+  <div class="sidenav-item" onclick="navTo('settings',this)">
+    <svg class="si-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2"/></svg>
+    Settings
+  </div>
+  <div class="sidenav-footer">
+    <div class="sidenav-footer-text">ClearPath v2.4.1 · FY 2026</div>
+    <div class="sidenav-footer-text" style="margin-top:2px;">5 regions · 18 facilities</div>
+  </div>
+</div>
+
+<!-- MAIN AREA -->
+<div class="main">
+
+<!-- ══════════════════ EXECUTIVE DASHBOARD (HOME) ══════════════════ -->
+<div id="dashboard" class="page active">
+  <div class="page-hdr">
+    <div>
+      <div class="page-title">Executive Financial Dashboard</div>
+      <div class="page-sub">FY 2026 YTD · 5 regions · 18 facilities · Last updated Mar 13, 2026 06:00 AM</div>
+    </div>
+    <div class="page-actions">
+      <select><option>FY 2026 YTD</option><option>FY 2026 Q1</option><option>FY 2025</option></select>
+      <select><option>All regions</option><option>North</option><option>South</option><option>East</option><option>West</option><option>Central</option></select>
+      <button class="btn">Export</button>
+      <button class="btn btn-y">⟳ Refresh</button>
+    </div>
+  </div>
+
+  <div class="kpi-strip">
+    <div class="kc"><div class="kl">Net revenue YTD</div><div class="kv">$1.84B</div><div class="kd">▲ 4.2% vs prior year</div></div>
+    <div class="kc a"><div class="kl">Operating income</div><div class="kv">$130M</div><div class="kd">+$60M vs budget</div></div>
+    <div class="kc a"><div class="kl">Operating margin</div><div class="kv">7.1%</div><div class="kd">+1.3 pts vs natl. avg</div></div>
+    <div class="kc a"><div class="kl">EBIDA margin</div><div class="kv">12.4%</div><div class="kd">Top quartile nationally</div></div>
+    <div class="kc w"><div class="kl">Labor % revenue</div><div class="kv">52.3%</div><div class="kd">+1.5 pts above benchmark</div></div>
+    <div class="kc w"><div class="kl">Financial exposure</div><div class="kv">$84M</div><div class="kd">4 critical alerts open</div></div>
+  </div>
+
+  <div class="tabnav" id="dashTabs">
+    <button class="tn active" onclick="dashTab('sum',this)">System summary</button>
+    <button class="tn" onclick="dashTab('bud',this)">Budget performance</button>
+    <button class="tn" onclick="dashTab('rev',this)">Revenue & payer</button>
+    <button class="tn" onclick="dashTab('mar',this)">Margin & profitability</button>
+    <button class="tn" onclick="dashTab('fac',this)">Facility rankings</button>
+    <button class="tn" onclick="dashTab('bmk',this)">Benchmarks</button>
+    <button class="tn" onclick="dashTab('alt',this)">Alerts & actions <span style="background:#E24301;color:#fff;font-size:10px;font-weight:600;border-radius:8px;padding:1px 5px;margin-left:2px;">4</span></button>
+  </div>
+
+  <!-- SYSTEM SUMMARY TAB -->
+  <div id="sum" class="dtab">
+    <div class="five">
+      <div class="mc b"><div class="ml">Net revenue YTD</div><div class="mv">$1.84B</div><div class="md up">▲ 4.2% vs PY</div><div class="mn">Budget $1.80B <span class="vp">+$40M</span></div></div>
+      <div class="mc b"><div class="ml">Operating expenses</div><div class="mv">$1.71B</div><div class="md dn2">▲ 3.8% vs PY</div><div class="mn">Budget $1.73B <span class="vp">-$20M fav</span></div></div>
+      <div class="mc"><div class="ml">Operating income</div><div class="mv">$130M</div><div class="md up">▲ $18M vs PY</div><div class="mn">Budget $70M <span class="vp">+$60M</span></div></div>
+      <div class="mc"><div class="ml">Operating margin</div><div class="mv up">7.1%</div><div class="md up">▲ 1.1 pts vs FY25</div><div class="mn">Natl 5.8% <span class="vp">+1.3 pts</span></div></div>
+      <div class="mc y"><div class="ml">EBIDA margin</div><div class="mv up">12.4%</div><div class="md up">▲ 0.8 pts vs FY25</div><div class="mn">Natl 10.1% <span class="vp">Top Q</span></div></div>
+    </div>
+    <div class="four">
+      <div class="mc b"><div class="ml">Days cash on hand</div><div class="mv">214</div><div class="md am">▼ 8 vs target 222</div></div>
+      <div class="mc b"><div class="ml">Days in AR</div><div class="mv">38.4</div><div class="md up">▼ 1.6 improved</div></div>
+      <div class="mc o"><div class="ml">Labor % revenue</div><div class="mv am">52.3%</div><div class="md dn2">Natl 50.8%</div></div>
+      <div class="mc"><div class="ml">Supply % revenue</div><div class="mv up">16.2%</div><div class="md up">Natl 17.1%</div></div>
+    </div>
+    <div class="two">
+      <div class="card">
+        <div class="ct" style="margin-bottom:8px;">Monthly revenue vs expenses vs budget ($M)</div>
+        <div class="legend"><div class="li"><div class="ld" style="background:#007F91;"></div>Revenue</div><div class="li"><div class="ld" style="background:#E24301;"></div>Expenses</div><div class="li"><div class="ld" style="background:#FFC532;"></div>Budget</div></div>
+        <div class="cw" style="height:200px;"><canvas id="c_revexp"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="ct" style="margin-bottom:8px;">Operating margin by region — vs system avg & national benchmark</div>
+        <div class="cw" style="height:200px;"><canvas id="c_regmarg"></canvas></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><div class="ct">Regional performance summary</div><select style="font-size:11px;"><option>Sort by margin</option><option>Sort by revenue</option></select></div>
+      <table>
+        <tr><th>Region</th><th>Fac.</th><th style="text-align:right;">Budget</th><th style="text-align:right;">Net revenue</th><th style="text-align:right;">Bgt var.</th><th style="text-align:right;">Expenses</th><th style="text-align:right;">Op. income</th><th style="text-align:right;">Margin</th><th>Natl rank</th><th>Status</th></tr>
+        <tr><td><strong>West Region</strong></td><td>3</td><td style="text-align:right;">$324M</td><td style="text-align:right;">$341M</td><td style="text-align:right;" class="vp">+$17M</td><td style="text-align:right;">$302M</td><td style="text-align:right;" class="vp">$39M</td><td style="text-align:right;" class="vp">11.4%</td><td><span class="badge bg">Top 5%</span></td><td><span class="badge bg">Outperform</span></td></tr>
+        <tr><td><strong>North Region</strong></td><td>4</td><td style="text-align:right;">$412M</td><td style="text-align:right;">$438M</td><td style="text-align:right;" class="vp">+$26M</td><td style="text-align:right;">$394M</td><td style="text-align:right;" class="vp">$44M</td><td style="text-align:right;" class="vp">10.0%</td><td><span class="badge bg">Top 10%</span></td><td><span class="badge bg">Outperform</span></td></tr>
+        <tr><td><strong>Central Region</strong></td><td>4</td><td style="text-align:right;">$388M</td><td style="text-align:right;">$396M</td><td style="text-align:right;" class="vp">+$8M</td><td style="text-align:right;">$368M</td><td style="text-align:right;" class="vp">$28M</td><td style="text-align:right;" class="vp">7.1%</td><td><span class="badge bg">Top 30%</span></td><td><span class="badge bg">On target</span></td></tr>
+        <tr><td><strong>East Region</strong></td><td>4</td><td style="text-align:right;">$402M</td><td style="text-align:right;">$398M</td><td style="text-align:right;" class="vn">-$4M</td><td style="text-align:right;">$384M</td><td style="text-align:right;" class="vp">$14M</td><td style="text-align:right;" class="am">3.5%</td><td><span class="badge ba">Btm 40%</span></td><td><span class="badge ba">Monitor</span></td></tr>
+        <tr><td><strong>South Region</strong></td><td>3</td><td style="text-align:right;">$298M</td><td style="text-align:right;">$267M</td><td style="text-align:right;" class="vn">-$31M</td><td style="text-align:right;">$262M</td><td style="text-align:right;" class="vp">$5M</td><td style="text-align:right;" class="am">1.9%</td><td><span class="badge br">Btm 20%</span></td><td><span class="badge br">At risk</span></td></tr>
+        <tr class="grand"><td colspan="2">System total</td><td style="text-align:right;">$1.824B</td><td style="text-align:right;">$1.840B</td><td style="text-align:right;" class="vp">+$16M</td><td style="text-align:right;">$1.710B</td><td style="text-align:right;" class="vp">$130M</td><td style="text-align:right;" class="vp">7.1%</td><td><span class="badge bg">Top 25%</span></td><td></td></tr>
+      </table>
+    </div>
+    <div class="ai-btn" onclick="alert('AI advisor: South Region is 10.4% below budget...')"><div class="ai-icon"><svg width="10" height="10" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></div>Ask AI to diagnose South Region underperformance ↗</div>
+  </div>
+
+  <!-- BUDGET TAB -->
+  <div id="bud" class="dtab" style="display:none;">
+    <div class="sqt">System is tracking $36M net favorable to budget — driven by labor savings in West and North and revenue outperformance in cardiology and orthopedics.</div>
+    <div class="four">
+      <div class="mc"><div class="ml">Revenue vs budget</div><div class="mv up">+$16M</div><div class="md up">+0.9% favorable</div></div>
+      <div class="mc"><div class="ml">Expense vs budget</div><div class="mv up">-$20M</div><div class="md up">-1.2% favorable</div></div>
+      <div class="mc y"><div class="ml">Net budget variance</div><div class="mv up">+$36M</div><div class="md up">Best since FY22</div></div>
+      <div class="mc o"><div class="ml">Facilities on/above budget</div><div class="mv">13/18</div><div class="md am">5 facilities below</div></div>
+    </div>
+    <div class="two">
+      <div class="card"><div class="ct" style="margin-bottom:8px;">Revenue variance by region ($M)</div><div class="cw" style="height:210px;"><canvas id="c_bud1"></canvas></div></div>
+      <div class="card"><div class="ct" style="margin-bottom:8px;">Expense variance by category ($M)</div><div class="cw" style="height:210px;"><canvas id="c_bud2"></canvas></div></div>
+    </div>
+    <div class="card"><div class="ct" style="margin-bottom:8px;">Facility budget variance ($M) — all 18 facilities</div><div class="cw" style="height:350px;"><canvas id="c_facbud"></canvas></div></div>
+  </div>
+
+  <!-- REVENUE TAB -->
+  <div id="rev" class="dtab" style="display:none;">
+    <div class="four">
+      <div class="mc b"><div class="ml">Gross charges</div><div class="mv">$5.42B</div><div class="md">YTD billed</div></div>
+      <div class="mc b"><div class="ml">Net patient revenue</div><div class="mv">$1.84B</div><div class="md am">33.9% yield</div></div>
+      <div class="mc o"><div class="ml">Contractual adj.</div><div class="mv dn2">-$3.14B</div><div class="md">57.9% of gross</div></div>
+      <div class="mc y"><div class="ml">Net rev / adj. discharge</div><div class="mv">$12,840</div><div class="md up">▲ $620 vs PY</div></div>
+    </div>
+    <div class="two">
+      <div class="card"><div class="ct" style="margin-bottom:8px;">Payer mix by region (%)</div><div class="legend"><div class="li"><div class="ld" style="background:#007F91;"></div>Commercial</div><div class="li"><div class="ld" style="background:#1797D7;"></div>Medicare</div><div class="li"><div class="ld" style="background:#6DC0E0;"></div>Medicare Adv.</div><div class="li"><div class="ld" style="background:#FFC532;"></div>Medicaid</div><div class="li"><div class="ld" style="background:#E24301;"></div>Self-pay</div></div><div class="cw" style="height:210px;"><canvas id="c_payer"></canvas></div></div>
+      <div class="card"><div class="ct" style="margin-bottom:8px;">Net revenue trend vs prior year ($M/month)</div><div class="legend"><div class="li"><div class="ld" style="background:#007F91;"></div>FY26</div><div class="li"><div class="ld" style="background:#1797D7;"></div>FY25</div><div class="li"><div class="ld" style="background:#FFC532;"></div>Budget</div></div><div class="cw" style="height:210px;"><canvas id="c_revtrend"></canvas></div></div>
+    </div>
+    <div class="card">
+      <div class="ct" style="margin-bottom:10px;">Revenue cycle performance by region</div>
+      <table>
+        <tr><th>Region</th><th style="text-align:right;">Net revenue</th><th style="text-align:right;">Yield %</th><th style="text-align:right;">Days AR</th><th style="text-align:right;">Denial rate</th><th style="text-align:right;">Bad debt %</th><th>AR benchmark</th></tr>
+        <tr><td>West Region</td><td style="text-align:right;">$341M</td><td style="text-align:right;">33.4%</td><td style="text-align:right;" class="vp">29.8</td><td style="text-align:right;" class="vp">3.2%</td><td style="text-align:right;" class="vp">1.8%</td><td><span class="badge bg">Below 35 ✓</span></td></tr>
+        <tr><td>North Region</td><td style="text-align:right;">$438M</td><td style="text-align:right;">34.2%</td><td style="text-align:right;" class="vp">34.2</td><td style="text-align:right;" class="vp">3.8%</td><td style="text-align:right;" class="vp">2.1%</td><td><span class="badge bg">Below 35 ✓</span></td></tr>
+        <tr><td>Central Region</td><td style="text-align:right;">$396M</td><td style="text-align:right;">33.6%</td><td style="text-align:right;" class="am">38.4</td><td style="text-align:right;" class="am">4.6%</td><td style="text-align:right;">2.4%</td><td><span class="badge ba">Above 35 !</span></td></tr>
+        <tr><td>East Region</td><td style="text-align:right;">$398M</td><td style="text-align:right;">33.7%</td><td style="text-align:right;" class="vn">44.8</td><td style="text-align:right;" class="vn">6.2%</td><td style="text-align:right;" class="vn">3.8%</td><td><span class="badge br">Above 40 !!</span></td></tr>
+        <tr><td>South Region</td><td style="text-align:right;">$267M</td><td style="text-align:right;">35.1%</td><td style="text-align:right;" class="vn">52.6</td><td style="text-align:right;" class="vn">7.8%</td><td style="text-align:right;" class="vn">4.9%</td><td><span class="badge br">Critical !!!</span></td></tr>
+        <tr class="grand"><td>System</td><td style="text-align:right;">$1.84B</td><td style="text-align:right;">33.9%</td><td style="text-align:right;">38.4</td><td style="text-align:right;" class="am">4.8%</td><td style="text-align:right;">2.8%</td><td><span class="badge ba">Monitor</span></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- MARGIN TAB -->
+  <div id="mar" class="dtab" style="display:none;">
+    <div class="five">
+      <div class="mc"><div class="ml">System op. margin</div><div class="mv up">7.1%</div><div class="md">Natl 5.8% <span class="vp">+1.3</span></div></div>
+      <div class="mc"><div class="ml">EBIDA margin</div><div class="mv up">12.4%</div><div class="md">Natl 10.1% <span class="vp">+2.3</span></div></div>
+      <div class="mc b"><div class="ml">Net patient margin</div><div class="mv up">8.4%</div><div class="md">Natl 6.2% <span class="vp">+2.2</span></div></div>
+      <div class="mc o"><div class="ml">Labor % revenue</div><div class="mv am">52.3%</div><div class="md">Natl 50.8% <span class="vn">unfav</span></div></div>
+      <div class="mc y"><div class="ml">Supply % revenue</div><div class="mv up">16.2%</div><div class="md">Natl 17.1% <span class="vp">fav</span></div></div>
+    </div>
+    <div class="two">
+      <div class="card"><div class="ct" style="margin-bottom:8px;">Op. margin trend vs benchmarks (%)</div><div class="legend"><div class="li"><div class="ld" style="background:#007F91;"></div>System</div><div class="li"><div class="ld" style="background:#FFC532;"></div>Natl median</div><div class="li"><div class="ld" style="background:#1797D7;"></div>Budget</div></div><div class="cw" style="height:210px;"><canvas id="c_martrend"></canvas></div></div>
+      <div class="card"><div class="ct" style="margin-bottom:8px;">Cost structure by region (%)</div><div class="legend"><div class="li"><div class="ld" style="background:#007F91;"></div>Labor</div><div class="li"><div class="ld" style="background:#1797D7;"></div>Supplies</div><div class="li"><div class="ld" style="background:#FFC532;"></div>Overhead</div><div class="li"><div class="ld" style="background:#828889;"></div>Other</div></div><div class="cw" style="height:210px;"><canvas id="c_cost"></canvas></div></div>
+    </div>
+  </div>
+
+  <!-- FACILITIES TAB -->
+  <div id="fac" class="dtab" style="display:none;">
+    <div class="subtabs">
+      <button class="st active" onclick="facTab('fa',this)">All facilities</button>
+      <button class="st" onclick="facTab('ft',this)">Top performers</button>
+      <button class="st" onclick="facTab('fl',this)">Low performers</button>
+    </div>
+    <div id="fa">
+      <div class="two">
+        <div class="card"><div class="ct" style="margin-bottom:8px;">Op. margin by facility — vs system avg & national</div><div class="cw" style="height:400px;"><canvas id="c_facmarg"></canvas></div></div>
+        <div class="card"><div class="ct" style="margin-bottom:8px;">Budget variance by facility ($M)</div><div class="cw" style="height:400px;"><canvas id="c_facvar"></canvas></div></div>
+      </div>
+    </div>
+    <div id="ft" style="display:none;">
+      <div class="good">Top 3 performers are driving system outperformance. West Medical Center (score 94) and North Campus Main (91) are in the national top decile.</div>
+      <div class="three">
+        <div class="fac-card tp"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;"><div><div style="font-family:var(--fp);font-size:13px;font-weight:600;color:var(--dn);">West Medical Center</div><div style="font-family:var(--fs);font-size:11px;color:var(--ag);">West Region · 3 campuses</div></div><div style="text-align:right;"><div style="font-family:var(--fp);font-size:20px;font-weight:600;color:#1D9E75;">14.2%</div><div style="font-family:var(--fs);font-size:11px;color:var(--ag);">Op. margin</div></div></div><div class="frow"><div class="fl">Net revenue</div><div class="fv">$168M</div></div><div class="frow"><div class="fl">Budget variance</div><div class="fv vp">+$14M</div></div><div class="frow"><div class="fl">Labor %</div><div class="fv vp">47.8%</div></div><div class="frow"><div class="fl">Days in AR</div><div class="fv vp">27.4</div></div><div style="margin-top:10px;"><span class="badge bg">Score 94 · Top 5% national</span></div></div>
+        <div class="fac-card tp"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;"><div><div style="font-family:var(--fp);font-size:13px;font-weight:600;color:var(--dn);">North Campus — Main</div><div style="font-family:var(--fs);font-size:11px;color:var(--ag);">North Region · Flagship</div></div><div style="text-align:right;"><div style="font-family:var(--fp);font-size:20px;font-weight:600;color:#1D9E75;">12.8%</div><div style="font-family:var(--fs);font-size:11px;color:var(--ag);">Op. margin</div></div></div><div class="frow"><div class="fl">Net revenue</div><div class="fv">$224M</div></div><div class="frow"><div class="fl">Budget variance</div><div class="fv vp">+$18M</div></div><div class="frow"><div class="fl">Labor %</div><div class="fv vp">48.6%</div></div><div class="frow"><div class="fl">Days in AR</div><div class="fv vp">31.2</div></div><div style="margin-top:10px;"><span class="badge bg">Score 91 · Top 8% national</span></div></div>
+        <div class="fac-card tp"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;"><div><div style="font-family:var(--fp);font-size:13px;font-weight:600;color:var(--dn);">West Pavilion</div><div style="font-family:var(--fs);font-size:11px;color:var(--ag);">West Region · Specialty</div></div><div style="text-align:right;"><div style="font-family:var(--fp);font-size:20px;font-weight:600;color:#1D9E75;">11.2%</div><div style="font-family:var(--fs);font-size:11px;color:var(--ag);">Op. margin</div></div></div><div class="frow"><div class="fl">Net revenue</div><div class="fv">$98M</div></div><div class="frow"><div class="fl">Budget variance</div><div class="fv vp">+$6M</div></div><div class="frow"><div class="fl">Labor %</div><div class="fv vp">49.4%</div></div><div class="frow"><div class="fl">Days in AR</div><div class="fv vp">30.8</div></div><div style="margin-top:10px;"><span class="badge bg">Score 88 · Top 12% national</span></div></div>
+      </div>
+    </div>
+    <div id="fl" style="display:none;">
+      <div class="abox">3 critical: East Trauma Center (0.8%), South Community Hospital (0.4%), South Medical Center (2.4%). Combined annual loss exposure: $42M.</div>
+      <div class="three">
+        <div class="fac-card lp"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;"><div><div style="font-family:var(--fp);font-size:13px;font-weight:600;color:var(--dn);">East Trauma Center</div><div style="font-family:var(--fs);font-size:11px;color:var(--ag);">East Region · Level II trauma</div></div><div style="text-align:right;"><div style="font-family:var(--fp);font-size:20px;font-weight:600;color:#E24301;">0.8%</div><div style="font-family:var(--fs);font-size:11px;color:var(--ag);">Op. margin</div></div></div><div class="frow"><div class="fl">Budget variance</div><div class="fv vn">-$16M</div></div><div class="frow"><div class="fl">Labor %</div><div class="fv vn">58.4%</div></div><div class="frow"><div class="fl">Days in AR</div><div class="fv vn">54.6</div></div><div style="margin-top:10px;"><span class="badge br">Score 14 · Bottom 14%</span></div></div>
+        <div class="fac-card lp"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;"><div><div style="font-family:var(--fp);font-size:13px;font-weight:600;color:var(--dn);">South Community Hosp.</div><div style="font-family:var(--fs);font-size:11px;color:var(--ag);">South Region · Safety net</div></div><div style="text-align:right;"><div style="font-family:var(--fp);font-size:20px;font-weight:600;color:#E24301;">0.4%</div><div style="font-family:var(--fs);font-size:11px;color:var(--ag);">Op. margin</div></div></div><div class="frow"><div class="fl">Budget variance</div><div class="fv vn">-$5M</div></div><div class="frow"><div class="fl">Labor %</div><div class="fv vn">59.2%</div></div><div class="frow"><div class="fl">Days in AR</div><div class="fv vn">56.4</div></div><div style="margin-top:10px;"><span class="badge br">Score 10 · Bottom 10%</span></div></div>
+        <div class="fac-card lp"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;"><div><div style="font-family:var(--fp);font-size:13px;font-weight:600;color:var(--dn);">South Medical Center</div><div style="font-family:var(--fs);font-size:11px;color:var(--ag);">South Region · Regional hub</div></div><div style="text-align:right;"><div style="font-family:var(--fp);font-size:20px;font-weight:600;color:#E24301;">2.4%</div><div style="font-family:var(--fs);font-size:11px;color:var(--ag);">Op. margin</div></div></div><div class="frow"><div class="fl">Budget variance</div><div class="fv vn">-$18M</div></div><div class="frow"><div class="fl">Labor %</div><div class="fv vn">56.8%</div></div><div class="frow"><div class="fl">Days in AR</div><div class="fv vn">51.2</div></div><div style="margin-top:10px;"><span class="badge br">Score 28 · Bottom 28%</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BENCHMARKS TAB -->
+  <div id="bmk" class="dtab" style="display:none;">
+    <div class="sqt">ClearPath is above the national median on 8 of 12 financial indicators and in the top quartile on 4: operating margin, EBIDA margin, current ratio, and net revenue per adjusted discharge.</div>
+    <div class="four">
+      <div class="mc"><div class="ml">Above natl. median</div><div class="mv up">8/12</div><div class="md up">66.7% of KPIs</div></div>
+      <div class="mc y"><div class="ml">Top-quartile metrics</div><div class="mv up">4/12</div></div>
+      <div class="mc o"><div class="ml">Below natl. median</div><div class="mv am">3/12</div><div class="md dn2">Labor, cash, denial</div></div>
+      <div class="mc b"><div class="ml">Benchmark source</div><div class="mv" style="font-size:14px;">Kaufman Hall</div><div class="md">HFMA · Moody's · CMS</div></div>
+    </div>
+    <div class="card">
+      <div class="ct" style="margin-bottom:12px;">Key metrics vs national median — yellow marker = national median</div>
+      <div class="bmark-row"><div class="bmark-label">Operating margin %</div><div class="bmark-bar-wrap"><div class="bmark-fill" style="width:71%;background:#007F91;">7.1%</div><div class="bmark-marker" style="left:58%;"></div></div><div class="bmark-val up">7.1%</div><div class="bmark-nat">Med 5.8%</div></div>
+      <div class="bmark-row"><div class="bmark-label">EBIDA margin %</div><div class="bmark-bar-wrap"><div class="bmark-fill" style="width:82%;background:#007F91;">12.4%</div><div class="bmark-marker" style="left:67%;"></div></div><div class="bmark-val up">12.4%</div><div class="bmark-nat">Med 10.1%</div></div>
+      <div class="bmark-row"><div class="bmark-label">Days cash on hand</div><div class="bmark-bar-wrap"><div class="bmark-fill" style="width:64%;background:#FFC532;color:#103454;">214</div><div class="bmark-marker" style="left:68%;"></div></div><div class="bmark-val am">214</div><div class="bmark-nat">Med 228</div></div>
+      <div class="bmark-row"><div class="bmark-label">Days in AR</div><div class="bmark-bar-wrap"><div class="bmark-fill" style="width:72%;background:#FFC532;color:#103454;">38.4</div><div class="bmark-marker" style="left:65%;"></div></div><div class="bmark-val am">38.4</div><div class="bmark-nat">Med 35.0</div></div>
+      <div class="bmark-row"><div class="bmark-label">Labor % revenue</div><div class="bmark-bar-wrap"><div class="bmark-fill" style="width:78%;background:#E24301;">52.3%</div><div class="bmark-marker" style="left:71%;"></div></div><div class="bmark-val dn2">52.3%</div><div class="bmark-nat">Med 50.8%</div></div>
+      <div class="bmark-row"><div class="bmark-label">Supply % revenue</div><div class="bmark-bar-wrap"><div class="bmark-fill" style="width:56%;background:#1797D7;">16.2%</div><div class="bmark-marker" style="left:62%;"></div></div><div class="bmark-val up">16.2%</div><div class="bmark-nat">Med 17.1%</div></div>
+      <div class="bmark-row"><div class="bmark-label">Denial rate</div><div class="bmark-bar-wrap"><div class="bmark-fill" style="width:64%;background:#E24301;">4.8%</div><div class="bmark-marker" style="left:50%;"></div></div><div class="bmark-val dn2">4.8%</div><div class="bmark-nat">Med 4.0%</div></div>
+      <div class="bmark-row"><div class="bmark-label">Net rev / adj. discharge</div><div class="bmark-bar-wrap"><div class="bmark-fill" style="width:84%;background:#007F91;">$12,840</div><div class="bmark-marker" style="left:72%;"></div></div><div class="bmark-val up">$12,840</div><div class="bmark-nat">Med $11.6K</div></div>
+    </div>
+    <div class="card"><div class="ct" style="margin-bottom:8px;">Percentile ranking vs ~1,200 peer health systems</div><div class="cw" style="height:210px;"><canvas id="c_quartile"></canvas></div></div>
+  </div>
+
+  <!-- ALERTS TAB -->
+  <div id="alt" class="dtab" style="display:none;">
+    <div class="four">
+      <div class="mc o"><div class="ml">Critical alerts</div><div class="mv dn2">4</div><div class="md dn2">Immediate action</div></div>
+      <div class="mc y"><div class="ml">High-priority flags</div><div class="mv am">7</div><div class="md am">2-week review</div></div>
+      <div class="mc b"><div class="ml">Monitoring items</div><div class="mv">11</div><div class="md">30-day track</div></div>
+      <div class="mc o"><div class="ml">Financial exposure</div><div class="mv dn2">$84M</div><div class="md dn2">If unaddressed FY26</div></div>
+    </div>
+    <div class="card">
+      <div class="ct" style="margin-bottom:10px;">Critical — immediate executive action required</div>
+      <div class="alert-row"><div class="adot" style="background:#E24301;margin-top:4px;"></div><div><div class="at">East Trauma Center — margin collapse · $18M exposure</div><div class="ab">0.8% margin · $16M below budget · 54.6 days AR · Labor at 58.4%. $18M annualized loss risk.</div><div class="ai-btn" style="margin-top:6px;font-size:11px;padding:5px 10px;"><div class="ai-icon"><svg width="10" height="10" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></div>Build 90-day turnaround plan ↗</div></div></div>
+      <div class="alert-row"><div class="adot" style="background:#E24301;margin-top:4px;"></div><div><div class="at">South Region — $31M revenue budget miss YTD</div><div class="ab">All 3 facilities below budget. 56+ days AR creating cash flow risk. Days cash projected at 200 by Q3.</div><div class="ai-btn" style="margin-top:6px;font-size:11px;padding:5px 10px;"><div class="ai-icon"><svg width="10" height="10" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></div>Revenue recovery plan ↗</div></div></div>
+      <div class="alert-row"><div class="adot" style="background:#E24301;margin-top:4px;"></div><div><div class="at">Denial rate 4.8% — above 4.0% benchmark · $22M at risk</div><div class="ab">East/South at 6.2%/7.8%. Prior authorization failures are the primary driver. $8M recoverable.</div></div></div>
+      <div class="alert-row"><div class="adot" style="background:#E24301;margin-top:4px;"></div><div><div class="at">Labor 1.5 pts above benchmark · $27.6M annual opportunity</div><div class="ab">52.3% vs 50.8% national. South at 57.4% — 6.6 pts above benchmark, largest gap in system.</div></div></div>
+    </div>
+    <div class="card">
+      <div class="ct" style="margin-bottom:10px;">High-priority monitoring</div>
+      <div class="alert-row"><div class="adot" style="background:#FFC532;margin-top:4px;"></div><div><div class="at">Days cash trending below target (214 vs 222)</div><div class="ab">Projected 200 by Q3. Board covenant: 180 days.</div></div></div>
+      <div class="alert-row"><div class="adot" style="background:#FFC532;margin-top:4px;"></div><div><div class="at">Behavioral health margin 5.6% — Medicaid rate risk Q3</div><div class="ab">62% Medicaid mix. A 3% rate cut pushes BH to breakeven.</div></div></div>
+      <div class="alert-row"><div class="adot" style="background:#FFC532;margin-top:4px;"></div><div><div class="at">Neurology volume -1.2% — competitor opening East region</div><div class="ab">$4.2M projected revenue impact year-end.</div></div></div>
+      <div class="alert-row"><div class="adot" style="background:#FFC532;margin-top:4px;"></div><div><div class="at">Central Region AR rising +0.4 days/month → 38.4 days</div><div class="ab">Payer billing mismatches Jan 2026. Est. $6M cash impact by Q2.</div></div></div>
+    </div>
+    <div class="ai-btn"><div class="ai-icon"><svg width="10" height="10" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></div>Build complete executive action plan with owners & milestones ↗</div>
+  </div>
+</div>
+
+<!-- ══════════════════ COST ACCOUNTING PAGE ══════════════════ -->
+<div id="cost" class="page">
+  <div class="page-hdr">
+    <div>
+      <div class="page-title">Cost Accounting &amp; Patient Analytics</div>
+      <div class="page-sub">FY 2026 YTD &middot; $312.4M total expenses &middot; 84,218 active cost objects &middot; 98.4% capture rate &middot; 18 facilities</div>
+    </div>
+    <div class="page-actions">
+      <select><option>FY 2026 YTD</option><option>FY 2026 Q1</option><option>FY 2026 Q2</option><option>FY 2025</option></select>
+      <select><option>All Facilities</option><option>West Region</option><option>North Region</option><option>Central Region</option><option>East Region</option><option>South Region</option></select>
+      <button class="btn">Export</button>
+      <button class="btn btn-y">&#8635; Refresh</button>
+    </div>
+  </div>
+  <div class="kpi-strip">
+    <div class="kc"><div class="kl">Total expenses YTD</div><div class="kv">$312.4M</div><div class="kd">&#8593; 3.8% vs PY</div></div>
+    <div class="kc a"><div class="kl">GL capture rate</div><div class="kv">98.4%</div><div class="kd">Target 99.0%</div></div>
+    <div class="kc a"><div class="kl">Active cost objects</div><div class="kv">84,218</div><div class="kd">+2,140 added YTD</div></div>
+    <div class="kc a"><div class="kl">Allocated cost</div><div class="kv">$289.6M</div><div class="kd">92.7% of total</div></div>
+    <div class="kc w"><div class="kl">Unallocated</div><div class="kv">$22.8M</div><div class="kd">7.3% &mdash; action needed</div></div>
+    <div class="kc w"><div class="kl">Labor % of cost</div><div class="kv">52.3%</div><div class="kd">+1.5 pts above benchmark</div></div>
+  </div>
+  <div class="tabnav" id="caTabs">
+    <button class="tn active" onclick="caTab('ca-gl',this)">GL Expense Capture</button>
+    <button class="tn" onclick="caTab('ca-objects',this)">Cost Objects</button>
+    <button class="tn" onclick="caTab('ca-classify',this)">Expense Classification</button>
+    <button class="tn" onclick="caTab('ca-alloc',this)">Allocation &amp; Dead-Ending</button>
+    <button class="tn" onclick="caTab('ca-unitcost',this)">Unit Cost Development</button>
+    <button class="tn" onclick="caTab('ca-patient',this)">Patient Analytics</button>
+  </div>
+
+  <!-- TAB 1: GL EXPENSE CAPTURE -->
+  <div id="ca-gl" class="catab">
+    <div class="five">
+      <div class="mc b"><div class="ml">Total GL expenses</div><div class="mv">$312.4M</div><div class="md up">&#8593; 3.8% vs PY</div><div class="mn">Budget $308.2M <span class="vn">+$4.2M unfav</span></div></div>
+      <div class="mc b"><div class="ml">Labor &amp; benefits</div><div class="mv">$163.4M</div><div class="md dn2">52.3% of total</div><div class="mn">Budget $158.8M <span class="vn">+$4.6M unfav</span></div></div>
+      <div class="mc"><div class="ml">Supplies &amp; drugs</div><div class="mv">$64.8M</div><div class="md up">20.7% of total</div><div class="mn">Budget $64.2M <span class="vp">-$0.6M fav</span></div></div>
+      <div class="mc y"><div class="ml">Purchased services</div><div class="mv">$38.4M</div><div class="md am">12.3% of total</div><div class="mn">Budget $36.8M <span class="vn">+$1.6M unfav</span></div></div>
+      <div class="mc o"><div class="ml">Unmatched / error</div><div class="mv dn2">$5.4M</div><div class="md dn2">1.6% unmatched</div><div class="mn">Threshold: 1.0%</div></div>
+    </div>
+    <div class="two">
+      <div class="card">
+        <div class="ct" style="margin-bottom:8px;">Monthly GL expenses by major category ($M)</div>
+        <div class="legend"><div class="li"><div class="ld" style="background:#007F91;"></div>Labor</div><div class="li"><div class="ld" style="background:#1797D7;"></div>Supplies</div><div class="li"><div class="ld" style="background:#FFC532;"></div>Purch. Svcs</div><div class="li"><div class="ld" style="background:#828889;"></div>Other</div></div>
+        <div class="cw" style="height:210px;"><canvas id="c_gl_monthly"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="ct" style="margin-bottom:8px;">GL capture rate by facility (%) &mdash; target 99.0%</div>
+        <div class="cw" style="height:210px;"><canvas id="c_gl_capture"></canvas></div>
+      </div>
+    </div>
+    <div class="two">
+      <div class="card">
+        <div class="ct" style="margin-bottom:8px;">Expense category: actual vs budget YTD ($M)</div>
+        <div class="cw" style="height:220px;"><canvas id="c_gl_cat"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="ct" style="margin-bottom:8px;">Labor % of revenue trend &mdash; 9-month rolling</div>
+        <div class="legend"><div class="li"><div class="ld" style="background:#007F91;"></div>System actual</div><div class="li"><div class="ld" style="background:#FFC532;"></div>Natl benchmark</div><div class="li"><div class="ld" style="background:#E24301;"></div>Budget target</div></div>
+        <div class="cw" style="height:220px;"><canvas id="c_gl_labor"></canvas></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><div class="ct">GL expense detail by cost category &mdash; 9 categories &middot; 248 accounts</div></div>
+      <table>
+        <tr><th>Category</th><th>GL accounts</th><th style="text-align:right;">YTD actual</th><th style="text-align:right;">YTD budget</th><th style="text-align:right;">Variance $</th><th style="text-align:right;">Var %</th><th style="text-align:right;">% of total</th><th style="text-align:right;">vs PY</th><th>Capture</th></tr>
+        <tr><td><strong>Salaries &amp; wages</strong></td><td>42</td><td style="text-align:right;">$128.4M</td><td style="text-align:right;">$124.8M</td><td style="text-align:right;" class="vn">+$3.6M</td><td style="text-align:right;" class="vn">+2.9%</td><td style="text-align:right;">41.1%</td><td style="text-align:right;" class="am">+4.2%</td><td><span class="badge bg">99.6%</span></td></tr>
+        <tr><td><strong>Benefits &amp; taxes</strong></td><td>18</td><td style="text-align:right;">$35.0M</td><td style="text-align:right;">$34.0M</td><td style="text-align:right;" class="vn">+$1.0M</td><td style="text-align:right;" class="vn">+2.9%</td><td style="text-align:right;">11.2%</td><td style="text-align:right;" class="am">+3.8%</td><td><span class="badge bg">99.4%</span></td></tr>
+        <tr><td><strong>Med/surg supplies</strong></td><td>38</td><td style="text-align:right;">$28.4M</td><td style="text-align:right;">$28.0M</td><td style="text-align:right;" class="vn">+$0.4M</td><td style="text-align:right;" class="vn">+1.4%</td><td style="text-align:right;">9.1%</td><td style="text-align:right;" class="vp">+1.8%</td><td><span class="badge bg">98.8%</span></td></tr>
+        <tr><td><strong>Pharmacy &amp; drugs</strong></td><td>24</td><td style="text-align:right;">$22.6M</td><td style="text-align:right;">$22.4M</td><td style="text-align:right;" class="vn">+$0.2M</td><td style="text-align:right;" class="vn">+0.9%</td><td style="text-align:right;">7.2%</td><td style="text-align:right;" class="vp">+2.2%</td><td><span class="badge bg">99.2%</span></td></tr>
+        <tr><td><strong>Purchased services</strong></td><td>32</td><td style="text-align:right;">$38.4M</td><td style="text-align:right;">$36.8M</td><td style="text-align:right;" class="vn">+$1.6M</td><td style="text-align:right;" class="vn">+4.3%</td><td style="text-align:right;">12.3%</td><td style="text-align:right;" class="vn">+6.8%</td><td><span class="badge ba">97.6%</span></td></tr>
+        <tr><td><strong>Depreciation</strong></td><td>14</td><td style="text-align:right;">$18.4M</td><td style="text-align:right;">$18.6M</td><td style="text-align:right;" class="vp">-$0.2M</td><td style="text-align:right;" class="vp">-1.1%</td><td style="text-align:right;">5.9%</td><td style="text-align:right;" class="vp">+1.2%</td><td><span class="badge bg">99.8%</span></td></tr>
+        <tr><td><strong>Overhead &amp; utilities</strong></td><td>28</td><td style="text-align:right;">$22.8M</td><td style="text-align:right;">$22.4M</td><td style="text-align:right;" class="vn">+$0.4M</td><td style="text-align:right;" class="vn">+1.8%</td><td style="text-align:right;">7.3%</td><td style="text-align:right;" class="am">+3.4%</td><td><span class="badge ba">97.2%</span></td></tr>
+        <tr><td><strong>Implants &amp; devices</strong></td><td>22</td><td style="text-align:right;">$10.6M</td><td style="text-align:right;">$9.8M</td><td style="text-align:right;" class="vn">+$0.8M</td><td style="text-align:right;" class="vn">+8.2%</td><td style="text-align:right;">3.4%</td><td style="text-align:right;" class="vn">+9.4%</td><td><span class="badge ba">96.8%</span></td></tr>
+        <tr><td><strong>Other operating</strong></td><td>30</td><td style="text-align:right;">$7.8M</td><td style="text-align:right;">$7.4M</td><td style="text-align:right;" class="vn">+$0.4M</td><td style="text-align:right;" class="vn">+5.4%</td><td style="text-align:right;">2.5%</td><td style="text-align:right;" class="am">+4.2%</td><td><span class="badge br">94.4%</span></td></tr>
+        <tr class="grand"><td colspan="2">Total / weighted avg</td><td style="text-align:right;">$312.4M</td><td style="text-align:right;">$308.2M</td><td style="text-align:right;" class="vn">+$4.2M</td><td style="text-align:right;" class="vn">+1.4%</td><td style="text-align:right;">100%</td><td style="text-align:right;" class="am">+3.8%</td><td><span class="badge bg">98.4%</span></td></tr>
+      </table>
+    </div>
+    <div class="ai-btn"><div class="ai-icon"><svg width="10" height="10" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></div>Analyze purchased services variance +$1.6M and identify root causes &#8599;</div>
+  </div>
+
+  <!-- TAB 2: COST OBJECTS -->
+  <div id="ca-objects" class="catab" style="display:none;">
+    <div class="sqt">84,218 active cost objects span 18 facilities across 5 regions. Department-level objects account for 68% of total assigned cost. 2,140 new objects added YTD from the North Region ambulatory expansion. South and East facilities show elevated inactive object counts requiring reconciliation.</div>
+    <div class="four">
+      <div class="mc b"><div class="ml">Active cost objects</div><div class="mv">84,218</div><div class="md up">+2,140 YTD</div></div>
+      <div class="mc b"><div class="ml">Dept. cost centers</div><div class="mv">1,842</div><div class="md">Primary allocation base</div></div>
+      <div class="mc y"><div class="ml">Sub-cost objects</div><div class="mv">82,376</div><div class="md">Procedure / patient level</div></div>
+      <div class="mc o"><div class="ml">Inactive / retired</div><div class="mv dn2">4,218</div><div class="md dn2">Pending reconciliation</div></div>
+    </div>
+    <div class="two">
+      <div class="card">
+        <div class="ct" style="margin-bottom:8px;">Cost objects by type &mdash; count and assigned cost ($M)</div>
+        <div class="cw" style="height:240px;"><canvas id="c_obj_type"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="ct" style="margin-bottom:8px;">Cost object utilization rate by facility (%) &mdash; target 96%</div>
+        <div class="cw" style="height:240px;"><canvas id="c_obj_util"></canvas></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><div class="ct">Cost object inventory by facility &mdash; active, inactive, utilization</div></div>
+      <table>
+        <tr><th>Facility</th><th>Region</th><th style="text-align:right;">Active obj.</th><th style="text-align:right;">Dept. ctrs</th><th style="text-align:right;">Sub-objects</th><th style="text-align:right;">Inactive</th><th style="text-align:right;">Util. rate</th><th style="text-align:right;">Assigned cost</th><th style="text-align:right;">Cost/object</th><th>Status</th></tr>
+        <tr><td><strong>West Medical Center</strong></td><td>West</td><td style="text-align:right;">8,420</td><td style="text-align:right;">184</td><td style="text-align:right;">8,236</td><td style="text-align:right;">212</td><td style="text-align:right;" class="vp">98.2%</td><td style="text-align:right;">$64.2M</td><td style="text-align:right;">$7,625</td><td><span class="badge bg">Optimal</span></td></tr>
+        <tr><td><strong>North Campus Main</strong></td><td>North</td><td style="text-align:right;">10,840</td><td style="text-align:right;">228</td><td style="text-align:right;">10,612</td><td style="text-align:right;">340</td><td style="text-align:right;" class="vp">97.4%</td><td style="text-align:right;">$82.4M</td><td style="text-align:right;">$7,602</td><td><span class="badge bg">Optimal</span></td></tr>
+        <tr><td><strong>Central Medical</strong></td><td>Central</td><td style="text-align:right;">7,680</td><td style="text-align:right;">162</td><td style="text-align:right;">7,518</td><td style="text-align:right;">248</td><td style="text-align:right;" class="vp">96.8%</td><td style="text-align:right;">$58.4M</td><td style="text-align:right;">$7,604</td><td><span class="badge bg">Optimal</span></td></tr>
+        <tr><td><strong>East Regional Hospital</strong></td><td>East</td><td style="text-align:right;">9,240</td><td style="text-align:right;">194</td><td style="text-align:right;">9,046</td><td style="text-align:right;">488</td><td style="text-align:right;" class="am">93.4%</td><td style="text-align:right;">$48.6M</td><td style="text-align:right;">$5,260</td><td><span class="badge ba">Monitor</span></td></tr>
+        <tr><td><strong>South Medical Center</strong></td><td>South</td><td style="text-align:right;">6,420</td><td style="text-align:right;">138</td><td style="text-align:right;">6,282</td><td style="text-align:right;">842</td><td style="text-align:right;" class="vn">87.6%</td><td style="text-align:right;">$22.4M</td><td style="text-align:right;">$3,490</td><td><span class="badge br">Review</span></td></tr>
+        <tr><td><strong>East Trauma Center</strong></td><td>East</td><td style="text-align:right;">4,820</td><td style="text-align:right;">104</td><td style="text-align:right;">4,716</td><td style="text-align:right;">624</td><td style="text-align:right;" class="vn">88.6%</td><td style="text-align:right;">$14.8M</td><td style="text-align:right;">$3,071</td><td><span class="badge br">Review</span></td></tr>
+        <tr><td><strong>Other 12 facilities</strong></td><td>All</td><td style="text-align:right;">36,798</td><td style="text-align:right;">832</td><td style="text-align:right;">35,966</td><td style="text-align:right;">1,464</td><td style="text-align:right;" class="vp">96.4%</td><td style="text-align:right;">$121.6M</td><td style="text-align:right;">$3,304</td><td><span class="badge bg">On target</span></td></tr>
+        <tr class="grand"><td colspan="2">System total</td><td style="text-align:right;">84,218</td><td style="text-align:right;">1,842</td><td style="text-align:right;">82,376</td><td style="text-align:right;">4,218</td><td style="text-align:right;" class="vp">95.8%</td><td style="text-align:right;">$312.4M</td><td style="text-align:right;">$3,710</td><td></td></tr>
+      </table>
+    </div>
+    <div class="ai-btn"><div class="ai-icon"><svg width="10" height="10" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></div>Identify and retire inactive cost objects at South and East facilities &#8599;</div>
+  </div>
+
+  <!-- TAB 3: EXPENSE CLASSIFICATION -->
+  <div id="ca-classify" class="catab" style="display:none;">
+    <div class="sqt">Expense classification maps $312.4M of GL costs to direct, indirect, and overhead categories. Direct costs represent 61.4% of total — above the national median of 58.2%, indicating strong cost traceability. Purchased services and Other Operating require reclassification review.</div>
+    <div class="four">
+      <div class="mc b"><div class="ml">Direct costs</div><div class="mv">$191.8M</div><div class="md up">61.4% of total</div><div class="mn">Natl 58.2% &mdash; <span class="vp">+3.2 pts fav</span></div></div>
+      <div class="mc b"><div class="ml">Indirect costs</div><div class="mv">$76.4M</div><div class="md">24.5% of total</div><div class="mn">Natl 26.4% &mdash; <span class="vp">fav</span></div></div>
+      <div class="mc y"><div class="ml">Overhead</div><div class="mv">$44.2M</div><div class="md am">14.1% of total</div><div class="mn">Natl 15.4% &mdash; <span class="vp">fav</span></div></div>
+      <div class="mc o"><div class="ml">Unclassified</div><div class="mv dn2">$5.4M</div><div class="md dn2">1.6% unclassified</div><div class="mn">Target: &lt;1.0%</div></div>
+    </div>
+    <div class="two">
+      <div class="card">
+        <div class="ct" style="margin-bottom:8px;">Cost classification: direct vs indirect vs overhead by service line ($M)</div>
+        <div class="cw" style="height:280px;"><canvas id="c_class_sl"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="ct" style="margin-bottom:8px;">Direct cost % by category &mdash; actual vs national median</div>
+        <div class="cw" style="height:280px;"><canvas id="c_class_direct"></canvas></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><div class="ct">Expense classification detail by GL category</div></div>
+      <table>
+        <tr><th>Cost category</th><th style="text-align:right;">Total $</th><th style="text-align:right;">Direct</th><th style="text-align:right;">Indirect</th><th style="text-align:right;">Overhead</th><th style="text-align:right;">Direct %</th><th style="text-align:right;">Natl direct %</th><th>Method</th><th>Status</th></tr>
+        <tr><td><strong>Salaries &amp; wages</strong></td><td style="text-align:right;">$128.4M</td><td style="text-align:right;">$94.2M</td><td style="text-align:right;">$22.4M</td><td style="text-align:right;">$11.8M</td><td style="text-align:right;" class="vp">73.4%</td><td style="text-align:right;">68.2%</td><td>Cost accounting</td><td><span class="badge bg">Classified</span></td></tr>
+        <tr><td><strong>Benefits &amp; taxes</strong></td><td style="text-align:right;">$35.0M</td><td style="text-align:right;">$25.6M</td><td style="text-align:right;">$6.2M</td><td style="text-align:right;">$3.2M</td><td style="text-align:right;" class="vp">73.1%</td><td style="text-align:right;">68.2%</td><td>Ratio-to-salary</td><td><span class="badge bg">Classified</span></td></tr>
+        <tr><td><strong>Med/surg supplies</strong></td><td style="text-align:right;">$28.4M</td><td style="text-align:right;">$26.8M</td><td style="text-align:right;">$1.2M</td><td style="text-align:right;">$0.4M</td><td style="text-align:right;" class="vp">94.4%</td><td style="text-align:right;">91.8%</td><td>Direct assignment</td><td><span class="badge bg">Classified</span></td></tr>
+        <tr><td><strong>Pharmacy &amp; drugs</strong></td><td style="text-align:right;">$22.6M</td><td style="text-align:right;">$21.4M</td><td style="text-align:right;">$0.8M</td><td style="text-align:right;">$0.4M</td><td style="text-align:right;" class="vp">94.7%</td><td style="text-align:right;">92.4%</td><td>Direct assignment</td><td><span class="badge bg">Classified</span></td></tr>
+        <tr><td><strong>Purchased services</strong></td><td style="text-align:right;">$38.4M</td><td style="text-align:right;">$14.8M</td><td style="text-align:right;">$18.2M</td><td style="text-align:right;">$5.4M</td><td style="text-align:right;" class="am">38.5%</td><td style="text-align:right;">42.4%</td><td>Contract-based</td><td><span class="badge ba">Review</span></td></tr>
+        <tr><td><strong>Depreciation</strong></td><td style="text-align:right;">$18.4M</td><td style="text-align:right;">$6.4M</td><td style="text-align:right;">$8.2M</td><td style="text-align:right;">$3.8M</td><td style="text-align:right;">34.8%</td><td style="text-align:right;">34.2%</td><td>Asset schedule</td><td><span class="badge bg">Classified</span></td></tr>
+        <tr><td><strong>Overhead &amp; utilities</strong></td><td style="text-align:right;">$22.8M</td><td style="text-align:right;">$0.0M</td><td style="text-align:right;">$8.4M</td><td style="text-align:right;">$14.4M</td><td style="text-align:right;">0.0%</td><td style="text-align:right;">0.0%</td><td>Square footage</td><td><span class="badge bg">Classified</span></td></tr>
+        <tr><td><strong>Implants &amp; devices</strong></td><td style="text-align:right;">$10.6M</td><td style="text-align:right;">$10.4M</td><td style="text-align:right;">$0.2M</td><td style="text-align:right;">$0.0M</td><td style="text-align:right;" class="vp">98.1%</td><td style="text-align:right;">96.8%</td><td>Direct assignment</td><td><span class="badge bg">Classified</span></td></tr>
+        <tr><td><strong>Other operating</strong></td><td style="text-align:right;">$7.8M</td><td style="text-align:right;">$2.2M</td><td style="text-align:right;">$2.2M</td><td style="text-align:right;">$3.4M</td><td style="text-align:right;" class="am">28.2%</td><td style="text-align:right;">34.4%</td><td>Activity-based</td><td><span class="badge ba">Review</span></td></tr>
+        <tr class="grand"><td>System total</td><td style="text-align:right;">$312.4M</td><td style="text-align:right;">$201.8M</td><td style="text-align:right;">$67.8M</td><td style="text-align:right;">$42.8M</td><td style="text-align:right;" class="vp">64.6%</td><td style="text-align:right;">62.2%</td><td>&mdash;</td><td></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB 4: ALLOCATION & DEAD-ENDING -->
+  <div id="ca-alloc" class="catab" style="display:none;">
+    <div class="sqt">Step-down allocation distributes $289.6M across patient care cost centers using the reciprocal cost method across 6 iterations. Laundry &amp; Linen is the most critical dead-end at $0.8M unallocated. Administration pool has $1.4M requiring driver reassignment.</div>
+    <div class="five">
+      <div class="mc b"><div class="ml">Total allocated</div><div class="mv">$289.6M</div><div class="md up">92.7% of expenses</div></div>
+      <div class="mc b"><div class="ml">Allocation rounds</div><div class="mv">6</div><div class="md">Reciprocal method</div></div>
+      <div class="mc y"><div class="ml">Dead-ended cost</div><div class="mv am">$22.8M</div><div class="md dn2">7.3% unallocated</div></div>
+      <div class="mc"><div class="ml">Overhead pools</div><div class="mv">28</div><div class="md">Across all facilities</div></div>
+      <div class="mc o"><div class="ml">Allocation errors</div><div class="mv dn2">$1.8M</div><div class="md dn2">Needs correction</div></div>
+    </div>
+    <div class="two">
+      <div class="card">
+        <div class="ct" style="margin-bottom:8px;">Overhead pool size vs amount allocated &mdash; top 10 pools ($M)</div>
+        <div class="legend"><div class="li"><div class="ld" style="background:#007F91;"></div>Allocated out</div><div class="li"><div class="ld" style="background:#E24301;"></div>Dead-ended</div></div>
+        <div class="cw" style="height:260px;"><canvas id="c_alloc_flow"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="ct" style="margin-bottom:8px;">Allocation completion % by pool &mdash; target 100%</div>
+        <div class="cw" style="height:260px;"><canvas id="c_dead_end"></canvas></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><div class="ct">Overhead pool allocation detail &mdash; top 12 pools</div><div><span class="badge bg">Complete</span> <span class="badge ba">Monitor</span> <span class="badge br">Critical</span></div></div>
+      <table>
+        <tr><th>Overhead pool</th><th style="text-align:right;">Pool total</th><th style="text-align:right;">Allocated out</th><th style="text-align:right;">Dead-ended</th><th style="text-align:right;">Alloc. %</th><th>Driver</th><th style="text-align:right;">Recipient depts</th><th>Method</th><th>Status</th></tr>
+        <tr><td><strong>Administration</strong></td><td style="text-align:right;">$42.8M</td><td style="text-align:right;">$41.4M</td><td style="text-align:right;" class="am">$1.4M</td><td style="text-align:right;" class="am">96.7%</td><td>Salary dollars</td><td style="text-align:right;">186</td><td>Reciprocal</td><td><span class="badge ba">Monitor</span></td></tr>
+        <tr><td><strong>Facilities / Plant</strong></td><td style="text-align:right;">$22.8M</td><td style="text-align:right;">$22.8M</td><td style="text-align:right;" class="vp">$0.0M</td><td style="text-align:right;" class="vp">100%</td><td>Square footage</td><td style="text-align:right;">204</td><td>Direct</td><td><span class="badge bg">Complete</span></td></tr>
+        <tr><td><strong>Information Technology</strong></td><td style="text-align:right;">$18.4M</td><td style="text-align:right;">$18.2M</td><td style="text-align:right;" class="vp">$0.2M</td><td style="text-align:right;" class="am">98.9%</td><td>FTE count</td><td style="text-align:right;">192</td><td>Reciprocal</td><td><span class="badge ba">Monitor</span></td></tr>
+        <tr><td><strong>Human Resources</strong></td><td style="text-align:right;">$8.6M</td><td style="text-align:right;">$8.6M</td><td style="text-align:right;" class="vp">$0.0M</td><td style="text-align:right;" class="vp">100%</td><td>FTE count</td><td style="text-align:right;">186</td><td>Direct</td><td><span class="badge bg">Complete</span></td></tr>
+        <tr><td><strong>Finance / Accounting</strong></td><td style="text-align:right;">$6.4M</td><td style="text-align:right;">$6.4M</td><td style="text-align:right;" class="vp">$0.0M</td><td style="text-align:right;" class="vp">100%</td><td>Salary dollars</td><td style="text-align:right;">186</td><td>Reciprocal</td><td><span class="badge bg">Complete</span></td></tr>
+        <tr><td><strong>Environmental Svcs</strong></td><td style="text-align:right;">$12.4M</td><td style="text-align:right;">$12.4M</td><td style="text-align:right;" class="vp">$0.0M</td><td style="text-align:right;" class="vp">100%</td><td>Square footage</td><td style="text-align:right;">204</td><td>Direct</td><td><span class="badge bg">Complete</span></td></tr>
+        <tr><td><strong>Central Sterile</strong></td><td style="text-align:right;">$8.2M</td><td style="text-align:right;">$7.8M</td><td style="text-align:right;" class="vn">$0.4M</td><td style="text-align:right;" class="am">95.1%</td><td>Procedures</td><td style="text-align:right;">48</td><td>Activity</td><td><span class="badge br">Review</span></td></tr>
+        <tr><td><strong>Medical Records</strong></td><td style="text-align:right;">$4.8M</td><td style="text-align:right;">$4.8M</td><td style="text-align:right;" class="vp">$0.0M</td><td style="text-align:right;" class="vp">100%</td><td>Discharges</td><td style="text-align:right;">186</td><td>Direct</td><td><span class="badge bg">Complete</span></td></tr>
+        <tr><td><strong>Laundry &amp; Linen</strong></td><td style="text-align:right;">$3.2M</td><td style="text-align:right;">$2.4M</td><td style="text-align:right;" class="vn">$0.8M</td><td style="text-align:right;" class="vn">75.0%</td><td>Pounds processed</td><td style="text-align:right;">124</td><td>Direct</td><td><span class="badge br">Critical</span></td></tr>
+        <tr><td><strong>Risk Management</strong></td><td style="text-align:right;">$3.6M</td><td style="text-align:right;">$3.6M</td><td style="text-align:right;" class="vp">$0.0M</td><td style="text-align:right;" class="vp">100%</td><td>Net revenue</td><td style="text-align:right;">186</td><td>Reciprocal</td><td><span class="badge bg">Complete</span></td></tr>
+        <tr><td><strong>Other 18 pools</strong></td><td style="text-align:right;">$60.8M</td><td style="text-align:right;">$59.2M</td><td style="text-align:right;" class="am">$1.6M</td><td style="text-align:right;" class="am">97.4%</td><td>Various</td><td style="text-align:right;">Various</td><td>Mixed</td><td><span class="badge ba">Monitor</span></td></tr>
+        <tr class="grand"><td>Total overhead</td><td style="text-align:right;">$192.0M</td><td style="text-align:right;">$187.6M</td><td style="text-align:right;" class="vn">$4.4M</td><td style="text-align:right;" class="am">97.7%</td><td>&mdash;</td><td style="text-align:right;">&mdash;</td><td>&mdash;</td><td></td></tr>
+      </table>
+    </div>
+    <div class="ai-btn"><div class="ai-icon"><svg width="10" height="10" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></div>Resolve Laundry &amp; Linen dead-end ($0.8M) and recommend allocation driver &#8599;</div>
+  </div>
+
+  <!-- TAB 5: UNIT COST DEVELOPMENT -->
+  <div id="ca-unitcost" class="catab" style="display:none;">
+    <div class="sqt">Unit costs derived from fully-allocated departmental costs divided by volume statistics. System cost per adjusted discharge is $6,988 vs national median $7,240 &mdash; favorable. ICU and Pharmacy are primary unfavorable outliers requiring focused management.</div>
+    <div class="five">
+      <div class="mc b"><div class="ml">Cost / adj. discharge</div><div class="mv">$6,988</div><div class="md up">Natl $7,240 <span class="vp">fav</span></div></div>
+      <div class="mc b"><div class="ml">Cost / ED visit</div><div class="mv">$682</div><div class="md up">Natl $720 <span class="vp">fav</span></div></div>
+      <div class="mc y"><div class="ml">Cost / RVU</div><div class="mv am">$48.40</div><div class="md dn2">Natl $44.80 <span class="vn">unfav</span></div></div>
+      <div class="mc"><div class="ml">Cost / OR minute</div><div class="mv">$42.20</div><div class="md up">Natl $46.40 <span class="vp">fav</span></div></div>
+      <div class="mc o"><div class="ml">Labor cost / RVU</div><div class="mv dn2">$25.30</div><div class="md dn2">Natl $22.40 <span class="vn">unfav</span></div></div>
+    </div>
+    <div class="two">
+      <div class="card">
+        <div class="ct" style="margin-bottom:8px;">Cost per adjusted discharge by service line &mdash; actual vs national median ($)</div>
+        <div class="cw" style="height:280px;"><canvas id="c_uc_discharge"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="ct" style="margin-bottom:8px;">Unit cost trend &mdash; cost per adjusted discharge monthly ($)</div>
+        <div class="legend"><div class="li"><div class="ld" style="background:#007F91;"></div>System</div><div class="li"><div class="ld" style="background:#FFC532;"></div>Natl median</div><div class="li"><div class="ld" style="background:#1797D7;"></div>Budget</div></div>
+        <div class="cw" style="height:280px;"><canvas id="c_uc_trend"></canvas></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><div class="ct">Unit cost detail by department category &mdash; fully-loaded including overhead</div></div>
+      <table>
+        <tr><th>Dept. category</th><th>Volume stat</th><th style="text-align:right;">Volume YTD</th><th style="text-align:right;">Total cost</th><th style="text-align:right;">Unit cost</th><th style="text-align:right;">Natl median</th><th style="text-align:right;">Variance</th><th style="text-align:right;">vs PY</th><th>Method</th></tr>
+        <tr><td><strong>Med/Surg nursing</strong></td><td>Patient day</td><td style="text-align:right;">89,400</td><td style="text-align:right;">$42.8M</td><td style="text-align:right;" class="vp">$479</td><td style="text-align:right;">$512</td><td style="text-align:right;" class="vp">-$33 fav</td><td style="text-align:right;" class="vp">-1.4%</td><td>RVU</td></tr>
+        <tr><td><strong>ICU / Critical Care</strong></td><td>Patient day</td><td style="text-align:right;">14,080</td><td style="text-align:right;">$22.4M</td><td style="text-align:right;" class="vn">$1,591</td><td style="text-align:right;">$1,480</td><td style="text-align:right;" class="vn">+$111 unfav</td><td style="text-align:right;" class="vn">+4.2%</td><td>RVU</td></tr>
+        <tr><td><strong>Operating Room</strong></td><td>OR minute</td><td style="text-align:right;">284,000</td><td style="text-align:right;">$11.9M</td><td style="text-align:right;" class="vp">$41.9</td><td style="text-align:right;">$46.4</td><td style="text-align:right;" class="vp">-$4.5 fav</td><td style="text-align:right;" class="vp">-2.1%</td><td>Cost/min</td></tr>
+        <tr><td><strong>Emergency Dept.</strong></td><td>ED visit</td><td style="text-align:right;">82,400</td><td style="text-align:right;">$56.2M</td><td style="text-align:right;" class="vp">$682</td><td style="text-align:right;">$720</td><td style="text-align:right;" class="vp">-$38 fav</td><td style="text-align:right;" class="vp">-1.8%</td><td>Cost/visit</td></tr>
+        <tr><td><strong>Radiology</strong></td><td>RVU</td><td style="text-align:right;">482,000</td><td style="text-align:right;">$16.4M</td><td style="text-align:right;" class="am">$34.0</td><td style="text-align:right;">$31.2</td><td style="text-align:right;" class="vn">+$2.8 unfav</td><td style="text-align:right;" class="am">+3.8%</td><td>RVU</td></tr>
+        <tr><td><strong>Laboratory</strong></td><td>CAP unit</td><td style="text-align:right;">2,840,000</td><td style="text-align:right;">$9.2M</td><td style="text-align:right;" class="vp">$3.24</td><td style="text-align:right;">$3.68</td><td style="text-align:right;" class="vp">-$0.44 fav</td><td style="text-align:right;" class="vp">-2.6%</td><td>CAP units</td></tr>
+        <tr><td><strong>Pharmacy</strong></td><td>Rx dispense</td><td style="text-align:right;">384,000</td><td style="text-align:right;">$22.6M</td><td style="text-align:right;" class="vn">$58.9</td><td style="text-align:right;">$54.2</td><td style="text-align:right;" class="vn">+$4.7 unfav</td><td style="text-align:right;" class="vn">+6.4%</td><td>Cost/Rx</td></tr>
+        <tr><td><strong>Physical Therapy</strong></td><td>Procedure</td><td style="text-align:right;">124,000</td><td style="text-align:right;">$9.2M</td><td style="text-align:right;" class="vp">$74.2</td><td style="text-align:right;">$82.4</td><td style="text-align:right;" class="vp">-$8.2 fav</td><td style="text-align:right;" class="vp">-1.2%</td><td>Procedure</td></tr>
+        <tr><td><strong>Cardiology procedural</strong></td><td>Procedure</td><td style="text-align:right;">18,400</td><td style="text-align:right;">$22.4M</td><td style="text-align:right;" class="vp">$1,217</td><td style="text-align:right;">$1,380</td><td style="text-align:right;" class="vp">-$163 fav</td><td style="text-align:right;" class="vp">-2.8%</td><td>Procedure</td></tr>
+        <tr class="grand"><td>System avg / total</td><td>Adj. discharge</td><td style="text-align:right;">44,700</td><td style="text-align:right;">$312.4M</td><td style="text-align:right;" class="vp">$6,988</td><td style="text-align:right;">$7,240</td><td style="text-align:right;" class="vp">-$252 fav</td><td style="text-align:right;" class="vp">+0.8%</td><td>&mdash;</td></tr>
+      </table>
+    </div>
+    <div class="ai-btn"><div class="ai-icon"><svg width="10" height="10" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></div>Model 5% reduction in ICU cost per patient day &mdash; system margin impact &#8599;</div>
+  </div>
+
+  <!-- TAB 6: PATIENT ANALYTICS -->
+  <div id="ca-patient" class="catab" style="display:none;">
+    <div class="sqt">Patient-level cost analytics cover 44,700 inpatient discharges YTD. Average contribution margin is $1,997 per case. Top 5% of patients by cost account for 42% of total inpatient spend. Psych/BH and Critical Care drive the highest negative-margin case concentration.</div>
+    <div class="five">
+      <div class="mc b"><div class="ml">Inpatient discharges</div><div class="mv">44,700</div><div class="md up">+3.2% vs PY</div></div>
+      <div class="mc b"><div class="ml">Avg cost / discharge</div><div class="mv">$6,988</div><div class="md up">Natl $7,240 <span class="vp">fav</span></div></div>
+      <div class="mc"><div class="ml">Avg contrib. margin</div><div class="mv up">$1,997</div><div class="md up">Per inpatient case</div></div>
+      <div class="mc y"><div class="ml">High-cost patients</div><div class="mv am">2,235</div><div class="md dn2">Top 5% &mdash; 42% of cost</div></div>
+      <div class="mc o"><div class="ml">Neg. margin cases</div><div class="mv dn2">8,940</div><div class="md dn2">20% of discharges</div></div>
+    </div>
+    <div class="two">
+      <div class="card">
+        <div class="ct" style="margin-bottom:8px;">Patient cost distribution &mdash; discharges by cost bucket</div>
+        <div class="cw" style="height:220px;"><canvas id="c_pat_dist"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="ct" style="margin-bottom:8px;">Contribution margin per case by service line &mdash; actual vs budget ($)</div>
+        <div class="cw" style="height:220px;"><canvas id="c_pat_margin"></canvas></div>
+      </div>
+    </div>
+    <div class="two">
+      <div class="card">
+        <div class="ct" style="margin-bottom:8px;">Net revenue vs total cost per case by payer ($)</div>
+        <div class="legend"><div class="li"><div class="ld" style="background:#007F91;"></div>Net revenue/case</div><div class="li"><div class="ld" style="background:#E24301;"></div>Total cost/case</div></div>
+        <div class="cw" style="height:220px;"><canvas id="c_pat_payer"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="ct" style="margin-bottom:8px;">High-cost patient concentration &mdash; Pareto analysis</div>
+        <div class="legend"><div class="li"><div class="ld" style="background:#007F91;"></div>% of total cost</div><div class="li"><div class="ld" style="background:#FFC532;"></div>Cumulative %</div></div>
+        <div class="cw" style="height:220px;"><canvas id="c_pat_pareto"></canvas></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><div class="ct">Patient analytics detail by service line &mdash; cost, margin, payer</div></div>
+      <table>
+        <tr><th>Service Line</th><th style="text-align:right;">Discharges</th><th style="text-align:right;">Total cost</th><th style="text-align:right;">Cost/case</th><th style="text-align:right;">Rev/case</th><th style="text-align:right;">Margin/case</th><th style="text-align:right;">Margin %</th><th style="text-align:right;">Neg. marg. %</th><th style="text-align:right;">Avg LOS</th><th>High cost</th></tr>
+        <tr><td><strong>Cardiology</strong></td><td style="text-align:right;">4,820</td><td style="text-align:right;">$43.3M</td><td style="text-align:right;" class="vp">$8,984</td><td style="text-align:right;">$13,300</td><td style="text-align:right;" class="vp">$4,316</td><td style="text-align:right;" class="vp">32.4%</td><td style="text-align:right;" class="vp">8.2%</td><td style="text-align:right;">3.8</td><td><span class="badge bg">Low</span></td></tr>
+        <tr><td><strong>Orthopedics</strong></td><td style="text-align:right;">3,240</td><td style="text-align:right;">$38.6M</td><td style="text-align:right;" class="vp">$11,914</td><td style="text-align:right;">$16,910</td><td style="text-align:right;" class="vp">$4,996</td><td style="text-align:right;" class="vp">29.6%</td><td style="text-align:right;" class="vp">4.8%</td><td style="text-align:right;">2.9</td><td><span class="badge bg">Low</span></td></tr>
+        <tr><td><strong>Oncology</strong></td><td style="text-align:right;">2,180</td><td style="text-align:right;">$35.4M</td><td style="text-align:right;" class="am">$16,238</td><td style="text-align:right;">$22,110</td><td style="text-align:right;" class="vp">$5,872</td><td style="text-align:right;" class="vp">26.6%</td><td style="text-align:right;" class="am">11.4%</td><td style="text-align:right;">5.4</td><td><span class="badge ba">Med</span></td></tr>
+        <tr><td><strong>Neurosciences</strong></td><td style="text-align:right;">3,640</td><td style="text-align:right;">$33.1M</td><td style="text-align:right;" class="am">$9,093</td><td style="text-align:right;">$11,868</td><td style="text-align:right;" class="vp">$2,775</td><td style="text-align:right;" class="vp">23.4%</td><td style="text-align:right;" class="am">12.6%</td><td style="text-align:right;">5.2</td><td><span class="badge ba">Med</span></td></tr>
+        <tr><td><strong>Med/Surg</strong></td><td style="text-align:right;">18,240</td><td style="text-align:right;">$42.8M</td><td style="text-align:right;" class="vp">$2,347</td><td style="text-align:right;">$2,982</td><td style="text-align:right;" class="vp">$635</td><td style="text-align:right;" class="vp">21.3%</td><td style="text-align:right;" class="am">18.4%</td><td style="text-align:right;">4.9</td><td><span class="badge bg">Low</span></td></tr>
+        <tr><td><strong>Critical Care</strong></td><td style="text-align:right;">1,640</td><td style="text-align:right;">$22.4M</td><td style="text-align:right;" class="vn">$13,659</td><td style="text-align:right;">$16,829</td><td style="text-align:right;" class="am">$3,170</td><td style="text-align:right;" class="am">18.8%</td><td style="text-align:right;" class="vn">26.4%</td><td style="text-align:right;">8.6</td><td><span class="badge br">High</span></td></tr>
+        <tr><td><strong>Women's Health</strong></td><td style="text-align:right;">6,820</td><td style="text-align:right;">$24.8M</td><td style="text-align:right;" class="vp">$3,636</td><td style="text-align:right;">$4,604</td><td style="text-align:right;" class="vp">$968</td><td style="text-align:right;" class="vp">21.0%</td><td style="text-align:right;" class="vp">9.8%</td><td style="text-align:right;">2.4</td><td><span class="badge bg">Low</span></td></tr>
+        <tr><td><strong>Psych / Behav. Hlth</strong></td><td style="text-align:right;">4,120</td><td style="text-align:right;">$17.9M</td><td style="text-align:right;" class="vn">$4,345</td><td style="text-align:right;">$3,592</td><td style="text-align:right;" class="vn">-$753</td><td style="text-align:right;" class="vn">-20.9%</td><td style="text-align:right;" class="vn">62.4%</td><td style="text-align:right;">12.4</td><td><span class="badge br">High</span></td></tr>
+        <tr class="grand"><td>System total</td><td style="text-align:right;">44,700</td><td style="text-align:right;">$312.4M</td><td style="text-align:right;" class="vp">$6,988</td><td style="text-align:right;">$8,985</td><td style="text-align:right;" class="vp">$1,997</td><td style="text-align:right;" class="vp">22.2%</td><td style="text-align:right;" class="am">20.0%</td><td style="text-align:right;">4.8</td><td></td></tr>
+      </table>
+    </div>
+    <div class="ai-btn"><div class="ai-icon"><svg width="10" height="10" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></div>Identify top 50 high-cost patient cohorts and model care protocol improvements &#8599;</div>
+  </div>
+</div>
+
+</div>
+
+<!-- ══════════════════ SERVICE LINE PAGE ══════════════════ -->
+<div id="serviceline" class="page">
+  <div class="page-hdr">
+    <div>
+      <div class="page-title">Service Line Analytics</div>
+      <div class="page-sub">FY 2026 YTD · 16 service lines · 8 acute · 8 ambulatory · $540.6M gross charges · $401.8M net revenue</div>
+    </div>
+    <div class="page-actions">
+      <select id="sl-region-filter" onchange="slFilterChange()"><option value="all">All Regions</option><option value="west">West</option><option value="north">North</option><option value="central">Central</option><option value="east">East</option><option value="south">South</option></select>
+      <select id="sl-view-filter"><option>FY 2026 YTD</option><option>FY 2026 Q1</option><option>FY 2025</option></select>
+      <button class="btn">Export</button>
+      <button class="btn btn-y">⟳ Refresh</button>
+    </div>
+  </div>
+
+  <!-- KPI Strip -->
+  <div class="kpi-strip">
+    <div class="kc"><div class="kl">Gross charges</div><div class="kv">$540.6M</div><div class="kd">↑ 5.8% vs PY</div></div>
+    <div class="kc a"><div class="kl">Net revenue</div><div class="kv">$401.8M</div><div class="kd">74.3% yield</div></div>
+    <div class="kc a"><div class="kl">Total cost</div><div class="kv">$312.4M</div><div class="kd">77.8% of net rev</div></div>
+    <div class="kc a"><div class="kl">Op. income</div><div class="kv">$89.4M</div><div class="kd">22.2% margin</div></div>
+    <div class="kc w"><div class="kl">Supply cost</div><div class="kv">$64.8M</div><div class="kd">↑ 3.2% vs budget</div></div>
+    <div class="kc w"><div class="kl">Loss lines</div><div class="kv">3 / 16</div><div class="kd">Psych, Burn, Home Hlth</div></div>
+  </div>
+
+  <!-- Tab nav -->
+  <div class="tabnav" id="slTabs">
+    <button class="tn active" onclick="slTab('sl-overview',this)">Service Line Overview</button>
+    <button class="tn" onclick="slTab('sl-acute',this)">Acute Care</button>
+    <button class="tn" onclick="slTab('sl-ambulatory',this)">Ambulatory</button>
+    <button class="tn" onclick="slTab('sl-supply',this)">Supply Utilization</button>
+    <button class="tn" onclick="slTab('sl-physician',this)">Physician Variation</button>
+    <button class="tn" onclick="slTab('sl-encounter',this)">Encounter Analytics</button>
+  </div>
+
+  <!-- ── TAB 1: OVERVIEW ── -->
+  <div id="sl-overview" class="sltab">
+    <div class="five">
+      <div class="mc b"><div class="ml">Top margin line</div><div class="mv up">Cardiology</div><div class="md up">32.4% · $42.1M income</div></div>
+      <div class="mc b"><div class="ml">Highest volume</div><div class="mv">Med/Surg</div><div class="md">18,240 discharges YTD</div></div>
+      <div class="mc y"><div class="ml">Fastest growing</div><div class="mv">Orthopedics</div><div class="md am">↑ 9.2% vol vs PY</div></div>
+      <div class="mc o"><div class="ml">Most at-risk</div><div class="mv dn2">Psych/BH</div><div class="md dn2">-4.2% margin · $3.1M loss</div></div>
+      <div class="mc o"><div class="ml">Supply variance</div><div class="mv am">+$2.1M</div><div class="md dn2">Unfav vs budget</div></div>
+    </div>
+    <div class="two">
+      <div class="card">
+        <div class="ct" style="margin-bottom:8px;">Net revenue by service line YTD ($M) — ranked</div>
+        <div class="cw" style="height:340px;"><canvas id="c_sl_rev"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="ct" style="margin-bottom:8px;">Operating margin by service line (%) — system avg 22.2%</div>
+        <div class="cw" style="height:340px;"><canvas id="c_sl_margin"></canvas></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><div class="ct">All service lines — P&L summary YTD</div>
+        <div style="display:flex;gap:6px;">
+          <span class="badge bg">Above avg</span><span class="badge ba">Monitor</span><span class="badge br">At risk</span>
+        </div>
+      </div>
+      <table>
+        <tr><th>Service Line</th><th>Type</th><th style="text-align:right;">Gross charges</th><th style="text-align:right;">Net revenue</th><th style="text-align:right;">Total cost</th><th style="text-align:right;">Op. income</th><th style="text-align:right;">Margin %</th><th style="text-align:right;">Vol YTD</th><th style="text-align:right;">Rev/case</th><th>Status</th></tr>
+        <tr><td><strong>Cardiology</strong></td><td><span class="badge bb2">Acute</span></td><td style="text-align:right;">$86.2M</td><td style="text-align:right;">$64.1M</td><td style="text-align:right;">$43.3M</td><td style="text-align:right;" class="vp">$20.8M</td><td style="text-align:right;" class="vp">32.4%</td><td style="text-align:right;">4,820</td><td style="text-align:right;">$13,300</td><td><span class="badge bg">Outperform</span></td></tr>
+        <tr><td><strong>Orthopedics</strong></td><td><span class="badge bb2">Acute</span></td><td style="text-align:right;">$72.4M</td><td style="text-align:right;">$54.8M</td><td style="text-align:right;">$38.6M</td><td style="text-align:right;" class="vp">$16.2M</td><td style="text-align:right;" class="vp">29.6%</td><td style="text-align:right;">3,240</td><td style="text-align:right;">$16,910</td><td><span class="badge bg">Outperform</span></td></tr>
+        <tr><td><strong>Oncology</strong></td><td><span class="badge bb2">Acute</span></td><td style="text-align:right;">$64.8M</td><td style="text-align:right;">$48.2M</td><td style="text-align:right;">$35.4M</td><td style="text-align:right;" class="vp">$12.8M</td><td style="text-align:right;" class="vp">26.6%</td><td style="text-align:right;">2,180</td><td style="text-align:right;">$22,110</td><td><span class="badge bg">Outperform</span></td></tr>
+        <tr><td><strong>Neurosciences</strong></td><td><span class="badge bb2">Acute</span></td><td style="text-align:right;">$58.4M</td><td style="text-align:right;">$43.2M</td><td style="text-align:right;">$33.1M</td><td style="text-align:right;" class="vp">$10.1M</td><td style="text-align:right;" class="vp">23.4%</td><td style="text-align:right;">3,640</td><td style="text-align:right;">$11,870</td><td><span class="badge bg">On target</span></td></tr>
+        <tr><td><strong>Med/Surg</strong></td><td><span class="badge bb2">Acute</span></td><td style="text-align:right;">$76.8M</td><td style="text-align:right;">$54.4M</td><td style="text-align:right;">$42.8M</td><td style="text-align:right;" class="vp">$11.6M</td><td style="text-align:right;" class="vp">21.3%</td><td style="text-align:right;">18,240</td><td style="text-align:right;">$2,980</td><td><span class="badge bg">On target</span></td></tr>
+        <tr><td><strong>Women's Health</strong></td><td><span class="badge bb2">Acute</span></td><td style="text-align:right;">$42.6M</td><td style="text-align:right;">$31.4M</td><td style="text-align:right;">$24.8M</td><td style="text-align:right;" class="vp">$6.6M</td><td style="text-align:right;" class="vp">21.0%</td><td style="text-align:right;">6,820</td><td style="text-align:right;">$4,600</td><td><span class="badge bg">On target</span></td></tr>
+        <tr><td><strong>Critical Care</strong></td><td><span class="badge bb2">Acute</span></td><td style="text-align:right;">$38.4M</td><td style="text-align:right;">$27.6M</td><td style="text-align:right;">$22.4M</td><td style="text-align:right;" class="vp">$5.2M</td><td style="text-align:right;" class="vp">18.8%</td><td style="text-align:right;">1,640</td><td style="text-align:right;">$16,830</td><td><span class="badge ba">Monitor</span></td></tr>
+        <tr><td><strong>Psych / Behav. Hlth</strong></td><td><span class="badge bb2">Acute</span></td><td style="text-align:right;">$22.4M</td><td style="text-align:right;">$14.8M</td><td style="text-align:right;">$17.9M</td><td style="text-align:right;" class="vn">-$3.1M</td><td style="text-align:right;" class="vn">-20.9%</td><td style="text-align:right;">4,120</td><td style="text-align:right;">$3,590</td><td><span class="badge br">At risk</span></td></tr>
+        <tr><td><strong>Surgical Svcs</strong></td><td><span class="badge bgr">Amb.</span></td><td style="text-align:right;">$28.4M</td><td style="text-align:right;">$22.8M</td><td style="text-align:right;">$16.4M</td><td style="text-align:right;" class="vp">$6.4M</td><td style="text-align:right;" class="vp">28.1%</td><td style="text-align:right;">8,640</td><td style="text-align:right;">$2,640</td><td><span class="badge bg">Outperform</span></td></tr>
+        <tr><td><strong>Primary Care</strong></td><td><span class="badge bgr">Amb.</span></td><td style="text-align:right;">$18.2M</td><td style="text-align:right;">$14.4M</td><td style="text-align:right;">$11.2M</td><td style="text-align:right;" class="vp">$3.2M</td><td style="text-align:right;" class="vp">22.2%</td><td style="text-align:right;">42,800</td><td style="text-align:right;">$337</td><td><span class="badge bg">On target</span></td></tr>
+        <tr><td><strong>Rehabilitation</strong></td><td><span class="badge bgr">Amb.</span></td><td style="text-align:right;">$14.8M</td><td style="text-align:right;">$11.6M</td><td style="text-align:right;">$9.2M</td><td style="text-align:right;" class="vp">$2.4M</td><td style="text-align:right;" class="vp">20.7%</td><td style="text-align:right;">28,400</td><td style="text-align:right;">$408</td><td><span class="badge ba">Monitor</span></td></tr>
+        <tr><td><strong>Radiology</strong></td><td><span class="badge bgr">Amb.</span></td><td style="text-align:right;">$22.6M</td><td style="text-align:right;">$16.8M</td><td style="text-align:right;">$13.4M</td><td style="text-align:right;" class="vp">$3.4M</td><td style="text-align:right;" class="vp">20.2%</td><td style="text-align:right;">62,400</td><td style="text-align:right;">$269</td><td><span class="badge ba">Monitor</span></td></tr>
+        <tr><td><strong>Gastroenterology</strong></td><td><span class="badge bgr">Amb.</span></td><td style="text-align:right;">$16.4M</td><td style="text-align:right;">$12.8M</td><td style="text-align:right;">$10.6M</td><td style="text-align:right;" class="vp">$2.2M</td><td style="text-align:right;" class="vp">17.2%</td><td style="text-align:right;">9,840</td><td style="text-align:right;">$1,300</td><td><span class="badge ba">Monitor</span></td></tr>
+        <tr><td><strong>Home Health</strong></td><td><span class="badge bgr">Amb.</span></td><td style="text-align:right;">$12.4M</td><td style="text-align:right;">$8.6M</td><td style="text-align:right;">$9.8M</td><td style="text-align:right;" class="vn">-$1.2M</td><td style="text-align:right;" class="vn">-14.0%</td><td style="text-align:right;">3,640</td><td style="text-align:right;">$2,360</td><td><span class="badge br">At risk</span></td></tr>
+        <tr><td><strong>Wound Care</strong></td><td><span class="badge bgr">Amb.</span></td><td style="text-align:right;">$8.6M</td><td style="text-align:right;">$6.4M</td><td style="text-align:right;">$7.2M</td><td style="text-align:right;" class="vn">-$0.8M</td><td style="text-align:right;" class="vn">-12.5%</td><td style="text-align:right;">4,200</td><td style="text-align:right;">$1,524</td><td><span class="badge br">At risk</span></td></tr>
+        <tr><td><strong>Lab / Pathology</strong></td><td><span class="badge bgr">Amb.</span></td><td style="text-align:right;">$16.2M</td><td style="text-align:right;">$11.4M</td><td style="text-align:right;">$9.2M</td><td style="text-align:right;" class="vp">$2.2M</td><td style="text-align:right;" class="vp">19.3%</td><td style="text-align:right;">184,000</td><td style="text-align:right;">$62</td><td><span class="badge ba">Monitor</span></td></tr>
+        <tr class="grand"><td colspan="2">System total</td><td style="text-align:right;">$540.6M</td><td style="text-align:right;">$401.8M</td><td style="text-align:right;">$312.4M</td><td style="text-align:right;" class="vp">$89.4M</td><td style="text-align:right;" class="vp">22.2%</td><td style="text-align:right;">—</td><td style="text-align:right;">—</td><td></td></tr>
+      </table>
+    </div>
+    <div class="ai-btn" onclick="alert('AI: Cardiology and Orthopedics account for 41% of system margin on 22% of revenue. Consider expanding surgical capacity...')"><div class="ai-icon"><svg width="10" height="10" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></div>Ask AI to identify margin improvement opportunities ↗</div>
+  </div>
+
+  <!-- ── TAB 2: ACUTE CARE ── -->
+  <div id="sl-acute" class="sltab" style="display:none;">
+    <div class="sqt">Acute care services generated $338.5M net revenue YTD (84.2% of system total). Cardiology and Orthopedics lead at 29.6% and 32.4% margins. Psych/BH remains the critical concern at -20.9% margin with $62M Medicaid exposure.</div>
+    <div class="four">
+      <div class="mc b"><div class="ml">Acute net revenue</div><div class="mv">$338.5M</div><div class="md up">84.2% of system total</div></div>
+      <div class="mc b"><div class="ml">Acute op. income</div><div class="mv up">$83.1M</div><div class="md up">24.6% acute margin</div></div>
+      <div class="mc o"><div class="ml">Avg LOS system</div><div class="mv am">4.8 days</div><div class="md dn2">Natl 4.2 days — unfav</div></div>
+      <div class="mc y"><div class="ml">Case mix index</div><div class="mv">1.84</div><div class="md up">↑ 0.06 vs PY</div></div>
+    </div>
+    <div class="two">
+      <div class="card">
+        <div class="ct" style="margin-bottom:8px;">Acute service line volume trend — discharges by month</div>
+        <div class="legend">
+          <div class="li"><div class="ld" style="background:#007F91;"></div>Cardiology</div>
+          <div class="li"><div class="ld" style="background:#1797D7;"></div>Orthopedics</div>
+          <div class="li"><div class="ld" style="background:#FFC532;"></div>Med/Surg</div>
+          <div class="li"><div class="ld" style="background:#E24301;"></div>Oncology</div>
+        </div>
+        <div class="cw" style="height:210px;"><canvas id="c_acute_vol"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="ct" style="margin-bottom:8px;">Average length of stay by service line (days) — vs national benchmark</div>
+        <div class="cw" style="height:210px;"><canvas id="c_los"></canvas></div>
+      </div>
+    </div>
+    <div class="two">
+      <div class="card">
+        <div class="ct" style="margin-bottom:8px;">Payer mix by acute service line (%)</div>
+        <div class="cw" style="height:240px;"><canvas id="c_acute_payer"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="ct" style="margin-bottom:8px;">Net revenue per adjusted discharge — acute lines</div>
+        <div class="cw" style="height:240px;"><canvas id="c_rev_discharge"></canvas></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ct" style="margin-bottom:10px;">Acute care detailed metrics — readmission, CMI, LOS, cost per case</div>
+      <table>
+        <tr><th>Service Line</th><th style="text-align:right;">Discharges</th><th style="text-align:right;">CMI</th><th style="text-align:right;">Avg LOS</th><th style="text-align:right;">Natl LOS</th><th style="text-align:right;">LOS var</th><th style="text-align:right;">Cost/case</th><th style="text-align:right;">30-day readmit</th><th style="text-align:right;">Budget var</th></tr>
+        <tr><td><strong>Cardiology</strong></td><td style="text-align:right;">4,820</td><td style="text-align:right;">2.42</td><td style="text-align:right;" class="vp">3.8</td><td style="text-align:right;">4.1</td><td style="text-align:right;" class="vp">-0.3</td><td style="text-align:right;">$8,980</td><td style="text-align:right;" class="vp">8.2%</td><td style="text-align:right;" class="vp">+$4.2M</td></tr>
+        <tr><td><strong>Orthopedics</strong></td><td style="text-align:right;">3,240</td><td style="text-align:right;">2.18</td><td style="text-align:right;" class="vp">2.9</td><td style="text-align:right;">3.2</td><td style="text-align:right;" class="vp">-0.3</td><td style="text-align:right;">$11,920</td><td style="text-align:right;" class="vp">4.8%</td><td style="text-align:right;" class="vp">+$3.8M</td></tr>
+        <tr><td><strong>Oncology</strong></td><td style="text-align:right;">2,180</td><td style="text-align:right;">3.14</td><td style="text-align:right;" class="am">5.4</td><td style="text-align:right;">5.1</td><td style="text-align:right;" class="am">+0.3</td><td style="text-align:right;">$16,240</td><td style="text-align:right;" class="am">11.4%</td><td style="text-align:right;" class="vp">+$2.4M</td></tr>
+        <tr><td><strong>Neurosciences</strong></td><td style="text-align:right;">3,640</td><td style="text-align:right;">2.06</td><td style="text-align:right;" class="am">5.2</td><td style="text-align:right;">4.8</td><td style="text-align:right;" class="am">+0.4</td><td style="text-align:right;">$9,100</td><td style="text-align:right;" class="am">12.6%</td><td style="text-align:right;" class="vp">+$1.6M</td></tr>
+        <tr><td><strong>Med/Surg</strong></td><td style="text-align:right;">18,240</td><td style="text-align:right;">1.22</td><td style="text-align:right;" class="am">4.9</td><td style="text-align:right;">4.4</td><td style="text-align:right;" class="am">+0.5</td><td style="text-align:right;">$2,348</td><td style="text-align:right;" class="am">14.2%</td><td style="text-align:right;" class="vp">+$1.2M</td></tr>
+        <tr><td><strong>Women's Health</strong></td><td style="text-align:right;">6,820</td><td style="text-align:right;">1.48</td><td style="text-align:right;" class="vp">2.4</td><td style="text-align:right;">2.6</td><td style="text-align:right;" class="vp">-0.2</td><td style="text-align:right;">$3,636</td><td style="text-align:right;" class="vp">5.4%</td><td style="text-align:right;" class="vp">+$0.8M</td></tr>
+        <tr><td><strong>Critical Care</strong></td><td style="text-align:right;">1,640</td><td style="text-align:right;">4.82</td><td style="text-align:right;" class="vn">8.6</td><td style="text-align:right;">7.4</td><td style="text-align:right;" class="vn">+1.2</td><td style="text-align:right;">$13,659</td><td style="text-align:right;" class="vn">18.4%</td><td style="text-align:right;" class="vn">-$1.8M</td></tr>
+        <tr><td><strong>Psych / Behav. Hlth</strong></td><td style="text-align:right;">4,120</td><td style="text-align:right;">1.06</td><td style="text-align:right;" class="vn">12.4</td><td style="text-align:right;">9.8</td><td style="text-align:right;" class="vn">+2.6</td><td style="text-align:right;">$4,345</td><td style="text-align:right;" class="vn">22.8%</td><td style="text-align:right;" class="vn">-$4.2M</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── TAB 3: AMBULATORY ── -->
+  <div id="sl-ambulatory" class="sltab" style="display:none;">
+    <div class="sqt">Ambulatory services generated $63.3M net revenue YTD (15.8% of total). Surgical Services leads at 28.1% margin. Home Health and Wound Care are loss-generating — combined $2M annual exposure.</div>
+    <div class="four">
+      <div class="mc b"><div class="ml">Amb. net revenue</div><div class="mv">$63.3M</div><div class="md">15.8% of system total</div></div>
+      <div class="mc b"><div class="ml">Total encounters</div><div class="mv">343,920</div><div class="md up">↑ 7.4% vs PY</div></div>
+      <div class="mc y"><div class="ml">Rev / encounter</div><div class="mv">$184</div><div class="md up">↑ $12 vs PY</div></div>
+      <div class="mc o"><div class="ml">Loss lines</div><div class="mv dn2">2</div><div class="md dn2">Home Hlth · Wound Care</div></div>
+    </div>
+    <div class="two">
+      <div class="card">
+        <div class="ct" style="margin-bottom:8px;">Ambulatory encounter volume by service line</div>
+        <div class="cw" style="height:240px;"><canvas id="c_amb_vol"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="ct" style="margin-bottom:8px;">Ambulatory margin % vs national benchmark</div>
+        <div class="cw" style="height:240px;"><canvas id="c_amb_margin"></canvas></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ct" style="margin-bottom:8px;">Ambulatory revenue trend by quarter — FY2025 vs FY2026 ($M)</div>
+      <div class="legend">
+        <div class="li"><div class="ld" style="background:#007F91;"></div>FY2026</div>
+        <div class="li"><div class="ld" style="background:#1797D7;border-style:dashed;"></div>FY2025</div>
+        <div class="li"><div class="ld" style="background:#FFC532;"></div>Budget</div>
+      </div>
+      <div class="cw" style="height:180px;"><canvas id="c_amb_trend"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="ct" style="margin-bottom:10px;">Ambulatory detailed P&L</div>
+      <table>
+        <tr><th>Service Line</th><th style="text-align:right;">Encounters</th><th style="text-align:right;">Net revenue</th><th style="text-align:right;">Direct cost</th><th style="text-align:right;">Overhead alloc.</th><th style="text-align:right;">Total cost</th><th style="text-align:right;">Op. income</th><th style="text-align:right;">Margin</th><th style="text-align:right;">Rev/enc.</th><th>Trend</th></tr>
+        <tr><td><strong>Surgical Svcs</strong></td><td style="text-align:right;">8,640</td><td style="text-align:right;">$22.8M</td><td style="text-align:right;">$11.4M</td><td style="text-align:right;">$5.0M</td><td style="text-align:right;">$16.4M</td><td style="text-align:right;" class="vp">$6.4M</td><td style="text-align:right;" class="vp">28.1%</td><td style="text-align:right;">$2,640</td><td><span class="badge bg">↑</span></td></tr>
+        <tr><td><strong>Primary Care</strong></td><td style="text-align:right;">42,800</td><td style="text-align:right;">$14.4M</td><td style="text-align:right;">$7.8M</td><td style="text-align:right;">$3.4M</td><td style="text-align:right;">$11.2M</td><td style="text-align:right;" class="vp">$3.2M</td><td style="text-align:right;" class="vp">22.2%</td><td style="text-align:right;">$337</td><td><span class="badge bg">→</span></td></tr>
+        <tr><td><strong>Rehabilitation</strong></td><td style="text-align:right;">28,400</td><td style="text-align:right;">$11.6M</td><td style="text-align:right;">$6.4M</td><td style="text-align:right;">$2.8M</td><td style="text-align:right;">$9.2M</td><td style="text-align:right;" class="vp">$2.4M</td><td style="text-align:right;" class="vp">20.7%</td><td style="text-align:right;">$408</td><td><span class="badge ba">→</span></td></tr>
+        <tr><td><strong>Radiology</strong></td><td style="text-align:right;">62,400</td><td style="text-align:right;">$16.8M</td><td style="text-align:right;">$9.2M</td><td style="text-align:right;">$4.2M</td><td style="text-align:right;">$13.4M</td><td style="text-align:right;" class="vp">$3.4M</td><td style="text-align:right;" class="vp">20.2%</td><td style="text-align:right;">$269</td><td><span class="badge ba">↓</span></td></tr>
+        <tr><td><strong>Gastroenterology</strong></td><td style="text-align:right;">9,840</td><td style="text-align:right;">$12.8M</td><td style="text-align:right;">$7.4M</td><td style="text-align:right;">$3.2M</td><td style="text-align:right;">$10.6M</td><td style="text-align:right;" class="vp">$2.2M</td><td style="text-align:right;" class="vp">17.2%</td><td style="text-align:right;">$1,300</td><td><span class="badge ba">→</span></td></tr>
+        <tr><td><strong>Lab / Pathology</strong></td><td style="text-align:right;">184,000</td><td style="text-align:right;">$11.4M</td><td style="text-align:right;">$6.2M</td><td style="text-align:right;">$3.0M</td><td style="text-align:right;">$9.2M</td><td style="text-align:right;" class="vp">$2.2M</td><td style="text-align:right;" class="vp">19.3%</td><td style="text-align:right;">$62</td><td><span class="badge ba">↑</span></td></tr>
+        <tr><td><strong>Home Health</strong></td><td style="text-align:right;">3,640</td><td style="text-align:right;">$8.6M</td><td style="text-align:right;">$6.8M</td><td style="text-align:right;">$3.0M</td><td style="text-align:right;">$9.8M</td><td style="text-align:right;" class="vn">-$1.2M</td><td style="text-align:right;" class="vn">-14.0%</td><td style="text-align:right;">$2,360</td><td><span class="badge br">↓</span></td></tr>
+        <tr><td><strong>Wound Care</strong></td><td style="text-align:right;">4,200</td><td style="text-align:right;">$6.4M</td><td style="text-align:right;">$5.0M</td><td style="text-align:right;">$2.2M</td><td style="text-align:right;">$7.2M</td><td style="text-align:right;" class="vn">-$0.8M</td><td style="text-align:right;" class="vn">-12.5%</td><td style="text-align:right;">$1,524</td><td><span class="badge br">↓</span></td></tr>
+        <tr class="grand"><td colspan="1">Total ambulatory</td><td style="text-align:right;">343,920</td><td style="text-align:right;">$104.8M</td><td style="text-align:right;">$60.2M</td><td style="text-align:right;">$26.8M</td><td style="text-align:right;">$87.0M</td><td style="text-align:right;" class="vp">$17.8M</td><td style="text-align:right;" class="vp">17.0%</td><td style="text-align:right;">$305</td><td></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── TAB 4: SUPPLY UTILIZATION ── -->
+  <div id="sl-supply" class="sltab" style="display:none;">
+    <div class="sqt">Supply costs total $64.8M YTD — 16.1% of net revenue, $2.1M unfavorable vs budget. Orthopedics implants and Oncology pharmacy are primary drivers of variance. Physician variation in implant selection represents $3.8M opportunity.</div>
+    <div class="five">
+      <div class="mc b"><div class="ml">Total supply cost</div><div class="mv">$64.8M</div><div class="md up">16.1% of net rev</div></div>
+      <div class="mc o"><div class="ml">Vs budget</div><div class="mv dn2">+$2.1M</div><div class="md dn2">3.3% unfavorable</div></div>
+      <div class="mc y"><div class="ml">Implant cost</div><div class="mv am">$18.4M</div><div class="md dn2">+$1.2M vs budget</div></div>
+      <div class="mc b"><div class="ml">Pharmacy</div><div class="mv">$22.6M</div><div class="md up">On budget</div></div>
+      <div class="mc"><div class="ml">Standardization opp.</div><div class="mv up">$3.8M</div><div class="md up">Implant variation</div></div>
+    </div>
+    <div class="two">
+      <div class="card">
+        <div class="ct" style="margin-bottom:8px;">Supply cost by service line ($M) — actual vs budget</div>
+        <div class="cw" style="height:280px;"><canvas id="c_supply_bar"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="ct" style="margin-bottom:8px;">Supply cost as % of net revenue by service line</div>
+        <div class="cw" style="height:280px;"><canvas id="c_supply_pct"></canvas></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ct" style="margin-bottom:8px;">Supply category breakdown — YTD actual vs budget ($M)</div>
+      <div class="legend">
+        <div class="li"><div class="ld" style="background:#007F91;"></div>Actual</div>
+        <div class="li"><div class="ld" style="background:#FFC532;"></div>Budget</div>
+        <div class="li"><div class="ld" style="background:#E24301;"></div>Variance (unfav)</div>
+      </div>
+      <div class="cw" style="height:200px;"><canvas id="c_supply_cat"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="ct" style="margin-bottom:10px;">Supply utilization detail by service line</div>
+      <table>
+        <tr><th>Service Line</th><th style="text-align:right;">Supply $</th><th style="text-align:right;">Supply % net rev</th><th style="text-align:right;">Natl benchmark %</th><th style="text-align:right;">Vs benchmark</th><th style="text-align:right;">Vs budget</th><th style="text-align:right;">Implants</th><th style="text-align:right;">Pharmacy</th><th>Standardization opp.</th></tr>
+        <tr><td><strong>Orthopedics</strong></td><td style="text-align:right;">$14.2M</td><td style="text-align:right;" class="vn">25.9%</td><td style="text-align:right;">22.4%</td><td style="text-align:right;" class="vn">+3.5 pts</td><td style="text-align:right;" class="vn">+$1.2M</td><td style="text-align:right;">$9.8M</td><td style="text-align:right;">$1.4M</td><td><span class="badge br">$2.4M opp.</span></td></tr>
+        <tr><td><strong>Oncology</strong></td><td style="text-align:right;">$13.6M</td><td style="text-align:right;" class="am">28.2%</td><td style="text-align:right;">26.8%</td><td style="text-align:right;" class="am">+1.4 pts</td><td style="text-align:right;" class="vn">+$0.6M</td><td style="text-align:right;">$2.4M</td><td style="text-align:right;">$8.6M</td><td><span class="badge ba">$0.8M opp.</span></td></tr>
+        <tr><td><strong>Cardiology</strong></td><td style="text-align:right;">$10.8M</td><td style="text-align:right;" class="vp">16.8%</td><td style="text-align:right;">18.2%</td><td style="text-align:right;" class="vp">-1.4 pts</td><td style="text-align:right;" class="vp">-$0.4M</td><td style="text-align:right;">$6.2M</td><td style="text-align:right;">$2.4M</td><td><span class="badge bg">On target</span></td></tr>
+        <tr><td><strong>Critical Care</strong></td><td style="text-align:right;">$8.4M</td><td style="text-align:right;" class="am">30.4%</td><td style="text-align:right;">28.6%</td><td style="text-align:right;" class="am">+1.8 pts</td><td style="text-align:right;" class="am">+$0.4M</td><td style="text-align:right;">$1.2M</td><td style="text-align:right;">$5.8M</td><td><span class="badge ba">$0.6M opp.</span></td></tr>
+        <tr><td><strong>Surgical Svcs</strong></td><td style="text-align:right;">$6.2M</td><td style="text-align:right;" class="vp">27.2%</td><td style="text-align:right;">28.4%</td><td style="text-align:right;" class="vp">-1.2 pts</td><td style="text-align:right;" class="vp">-$0.2M</td><td style="text-align:right;">$3.4M</td><td style="text-align:right;">$1.4M</td><td><span class="badge bg">On target</span></td></tr>
+        <tr><td><strong>Neurosciences</strong></td><td style="text-align:right;">$5.8M</td><td style="text-align:right;" class="am">13.4%</td><td style="text-align:right;">12.8%</td><td style="text-align:right;" class="am">+0.6 pts</td><td style="text-align:right;" class="am">+$0.2M</td><td style="text-align:right;">$1.8M</td><td style="text-align:right;">$2.4M</td><td><span class="badge ba">Monitor</span></td></tr>
+        <tr><td><strong>Other lines</strong></td><td style="text-align:right;">$5.8M</td><td style="text-align:right;">—</td><td style="text-align:right;">—</td><td style="text-align:right;">—</td><td style="text-align:right;" class="vp">-$0.1M</td><td style="text-align:right;">$1.6M</td><td style="text-align:right;">$0.6M</td><td><span class="badge bg">On target</span></td></tr>
+        <tr class="grand"><td colspan="1">Total</td><td style="text-align:right;">$64.8M</td><td style="text-align:right;">16.1%</td><td style="text-align:right;">15.8%</td><td style="text-align:right;" class="am">+0.3 pts</td><td style="text-align:right;" class="vn">+$2.1M</td><td style="text-align:right;">$26.4M</td><td style="text-align:right;">$22.6M</td><td><span class="badge ba">$3.8M total opp.</span></td></tr>
+      </table>
+    </div>
+    <div class="ai-btn"><div class="ai-icon"><svg width="10" height="10" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></div>Build implant standardization plan for Orthopedics ($2.4M opportunity) ↗</div>
+  </div>
+
+  <!-- ── TAB 5: PHYSICIAN VARIATION ── -->
+  <div id="sl-physician" class="sltab" style="display:none;">
+    <div class="sqt">Physician variation analysis covers 284 attending physicians across 16 service lines. Supply cost variation represents the largest opportunity at $3.8M. LOS outliers in Med/Surg and Critical Care account for an estimated $4.2M excess cost annually.</div>
+    <div class="four">
+      <div class="mc b"><div class="ml">Physicians analyzed</div><div class="mv">284</div><div class="md">Attending staff YTD</div></div>
+      <div class="mc o"><div class="ml">LOS opportunity</div><div class="mv dn2">$4.2M</div><div class="md dn2">Outlier physicians</div></div>
+      <div class="mc o"><div class="ml">Supply variation</div><div class="mv am">$3.8M</div><div class="md dn2">Implant standardization</div></div>
+      <div class="mc y"><div class="ml">High-value physicians</div><div class="mv up">42</div><div class="md up">Top quartile — all metrics</div></div>
+    </div>
+    <div class="two">
+      <div class="card">
+        <div class="ct" style="margin-bottom:8px;">Supply cost per case — physician variation in Orthopedics (top 20 surgeons)</div>
+        <div class="cw" style="height:300px;"><canvas id="c_phys_supply"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="ct" style="margin-bottom:8px;">LOS index vs CMI-adjusted expected — by physician quartile</div>
+        <div class="cw" style="height:300px;"><canvas id="c_phys_los"></canvas></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ct" style="margin-bottom:10px;">Physician scorecards — top 10 and bottom 10 by composite quality/efficiency score</div>
+      <table>
+        <tr><th>Physician</th><th>Service Line</th><th style="text-align:right;">Cases</th><th style="text-align:right;">Avg LOS</th><th style="text-align:right;">LOS index</th><th style="text-align:right;">Supply/case</th><th style="text-align:right;">Readmit %</th><th style="text-align:right;">Mortality index</th><th style="text-align:right;">Comp. score</th><th>Quartile</th></tr>
+        <tr><td><strong>Dr. A. Chen</strong></td><td>Cardiology</td><td style="text-align:right;">284</td><td style="text-align:right;" class="vp">3.2</td><td style="text-align:right;" class="vp">0.82</td><td style="text-align:right;" class="vp">$7,840</td><td style="text-align:right;" class="vp">5.6%</td><td style="text-align:right;" class="vp">0.76</td><td style="text-align:right;" class="vp">94</td><td><span class="badge bg">Q1 Top</span></td></tr>
+        <tr><td><strong>Dr. M. Patel</strong></td><td>Orthopedics</td><td style="text-align:right;">248</td><td style="text-align:right;" class="vp">2.6</td><td style="text-align:right;" class="vp">0.88</td><td style="text-align:right;" class="vp">$10,240</td><td style="text-align:right;" class="vp">3.2%</td><td style="text-align:right;" class="vp">0.62</td><td style="text-align:right;" class="vp">92</td><td><span class="badge bg">Q1 Top</span></td></tr>
+        <tr><td><strong>Dr. S. Williams</strong></td><td>Oncology</td><td style="text-align:right;">196</td><td style="text-align:right;" class="vp">5.1</td><td style="text-align:right;" class="vp">0.94</td><td style="text-align:right;" class="vp">$14,820</td><td style="text-align:right;" class="vp">8.4%</td><td style="text-align:right;" class="vp">0.84</td><td style="text-align:right;" class="vp">88</td><td><span class="badge bg">Q1</span></td></tr>
+        <tr><td><strong>Dr. R. Johnson</strong></td><td>Neurosciences</td><td style="text-align:right;">214</td><td style="text-align:right;">4.9</td><td style="text-align:right;">1.02</td><td style="text-align:right;">$8,640</td><td style="text-align:right;">11.2%</td><td style="text-align:right;">0.94</td><td style="text-align:right;">74</td><td><span class="badge ba">Q2</span></td></tr>
+        <tr><td><strong>Dr. K. Thompson</strong></td><td>Med/Surg</td><td style="text-align:right;">842</td><td style="text-align:right;" class="am">5.8</td><td style="text-align:right;" class="am">1.18</td><td style="text-align:right;">$2,640</td><td style="text-align:right;" class="am">16.4%</td><td style="text-align:right;">1.04</td><td style="text-align:right;" class="am">58</td><td><span class="badge ba">Q3</span></td></tr>
+        <tr><td><strong>Dr. L. Garcia</strong></td><td>Orthopedics</td><td style="text-align:right;">186</td><td style="text-align:right;" class="am">3.8</td><td style="text-align:right;" class="am">1.22</td><td style="text-align:right;" class="vn">$18,640</td><td style="text-align:right;" class="am">7.8%</td><td style="text-align:right;">1.12</td><td style="text-align:right;" class="vn">42</td><td><span class="badge br">Q4</span></td></tr>
+        <tr><td><strong>Dr. B. Martinez</strong></td><td>Critical Care</td><td style="text-align:right;">128</td><td style="text-align:right;" class="vn">11.4</td><td style="text-align:right;" class="vn">1.48</td><td style="text-align:right;" class="vn">$16,840</td><td style="text-align:right;" class="vn">24.6%</td><td style="text-align:right;" class="am">1.24</td><td style="text-align:right;" class="vn">28</td><td><span class="badge br">Q4 Bottom</span></td></tr>
+      </table>
+    </div>
+    <div class="ai-btn"><div class="ai-icon"><svg width="10" height="10" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></div>Generate peer benchmarking report for Q4 physician outliers ↗</div>
+  </div>
+
+  <!-- ── TAB 6: ENCOUNTER ANALYTICS ── -->
+  <div id="sl-encounter" class="sltab" style="display:none;">
+    <div class="sqt">Encounter-level analytics cover 1.84M total encounters YTD across all service lines. DRG optimization represents $6.2M opportunity. Documentation gaps in Med/Surg and Psych are the primary drivers of undercoding.</div>
+    <div class="five">
+      <div class="mc b"><div class="ml">Total encounters</div><div class="mv">1.84M</div><div class="md up">↑ 6.2% vs PY</div></div>
+      <div class="mc b"><div class="ml">Avg net rev / enc.</div><div class="mv">$218</div><div class="md up">↑ $14 vs PY</div></div>
+      <div class="mc y"><div class="ml">DRG optimization opp.</div><div class="mv am">$6.2M</div><div class="md dn2">Documentation gaps</div></div>
+      <div class="mc o"><div class="ml">Observation rate</div><div class="mv am">14.8%</div><td style="text-align:right;"><div class="md dn2">Natl 12.4% — unfav</div></div></div>
+      <div class="mc"><div class="ml">One-day stays</div><div class="mv">22.4%</div><div class="md">Potential for short-stay</div></div>
+    </div>
+    <div class="two">
+      <div class="card">
+        <div class="ct" style="margin-bottom:8px;">Encounter volume by service line — monthly trend</div>
+        <div class="legend">
+          <div class="li"><div class="ld" style="background:#007F91;"></div>Inpatient</div>
+          <div class="li"><div class="ld" style="background:#1797D7;"></div>Ambulatory</div>
+          <div class="li"><div class="ld" style="background:#FFC532;"></div>Observation</div>
+          <div class="li"><div class="ld" style="background:#E24301;"></div>ED</div>
+        </div>
+        <div class="cw" style="height:210px;"><canvas id="c_enc_trend"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="ct" style="margin-bottom:8px;">Revenue per encounter by service line — actual vs expected ($)</div>
+        <div class="cw" style="height:210px;"><canvas id="c_enc_rev"></canvas></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ct" style="margin-bottom:8px;">DRG distribution analysis — top 20 DRGs by net revenue contribution</div>
+      <div class="cw" style="height:220px;"><canvas id="c_drg"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="ct" style="margin-bottom:10px;">Encounter-level P&L by care setting and payer</div>
+      <table>
+        <tr><th>Care setting</th><th style="text-align:right;">Encounters</th><th style="text-align:right;">Net revenue</th><th style="text-align:right;">Rev/enc</th><th style="text-align:right;">Cost/enc</th><th style="text-align:right;">Margin/enc</th><th style="text-align:right;">Margin %</th><th style="text-align:right;">Denial rate</th><th style="text-align:right;">Avg LOS</th><th>Benchmark</th></tr>
+        <tr><td><strong>Inpatient acute</strong></td><td style="text-align:right;">44,700</td><td style="text-align:right;">$338.5M</td><td style="text-align:right;">$7,572</td><td style="text-align:right;">$5,726</td><td style="text-align:right;" class="vp">$1,846</td><td style="text-align:right;" class="vp">24.4%</td><td style="text-align:right;" class="vp">3.8%</td><td style="text-align:right;">4.8</td><td><span class="badge bg">Above natl</span></td></tr>
+        <tr><td><strong>Ambulatory surgery</strong></td><td style="text-align:right;">8,640</td><td style="text-align:right;">$22.8M</td><td style="text-align:right;">$2,640</td><td style="text-align:right;">$1,898</td><td style="text-align:right;" class="vp">$742</td><td style="text-align:right;" class="vp">28.1%</td><td style="text-align:right;" class="vp">4.2%</td><td style="text-align:right;">—</td><td><span class="badge bg">Above natl</span></td></tr>
+        <tr><td><strong>Observation</strong></td><td style="text-align:right;">10,840</td><td style="text-align:right;">$24.4M</td><td style="text-align:right;">$2,250</td><td style="text-align:right;">$2,180</td><td style="text-align:right;" class="am">$70</td><td style="text-align:right;" class="am">3.1%</td><td style="text-align:right;" class="vn">6.8%</td><td style="text-align:right;">1.9</td><td><span class="badge ba">Monitor</span></td></tr>
+        <tr><td><strong>Emergency Dept.</strong></td><td style="text-align:right;">82,400</td><td style="text-align:right;">$68.4M</td><td style="text-align:right;">$830</td><td style="text-align:right;">$682</td><td style="text-align:right;" class="vp">$148</td><td style="text-align:right;" class="vp">17.8%</td><td style="text-align:right;" class="am">5.4%</td><td style="text-align:right;">—</td><td><span class="badge ba">On target</span></td></tr>
+        <tr><td><strong>Clinic / Amb. visits</strong></td><td style="text-align:right;">343,920</td><td style="text-align:right;">$104.8M</td><td style="text-align:right;">$305</td><td style="text-align:right;">$253</td><td style="text-align:right;" class="vp">$52</td><td style="text-align:right;" class="vp">17.0%</td><td style="text-align:right;" class="vp">3.2%</td><td style="text-align:right;">—</td><td><span class="badge bg">Above natl</span></td></tr>
+        <tr><td><strong>Home health</strong></td><td style="text-align:right;">3,640</td><td style="text-align:right;">$8.6M</td><td style="text-align:right;">$2,362</td><td style="text-align:right;">$2,692</td><td style="text-align:right;" class="vn">-$330</td><td style="text-align:right;" class="vn">-14.0%</td><td style="text-align:right;" class="vn">8.4%</td><td style="text-align:right;">—</td><td><span class="badge br">Below natl</span></td></tr>
+        <tr class="grand"><td>Total system</td><td style="text-align:right;">1,840,000</td><td style="text-align:right;">$401.8M</td><td style="text-align:right;">$218</td><td style="text-align:right;">$170</td><td style="text-align:right;" class="vp">$48</td><td style="text-align:right;" class="vp">22.2%</td><td style="text-align:right;" class="am">4.8%</td><td style="text-align:right;">—</td><td></td></tr>
+      </table>
+    </div>
+    <div class="ai-btn"><div class="ai-icon"><svg width="10" height="10" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></div>Identify top DRG documentation opportunities and estimated revenue impact ↗</div>
+  </div>
+</div>
+
+<!-- ══════════════════ OTHER PAGES ══════════════════ -->
+<div id="reports" class="page"><div class="page-hdr"><div><div class="page-title">Integrated Reports</div><div class="page-sub">Scheduled and on-demand financial reporting across all modules</div></div></div><div class="coming-soon"><div class="cs-icon"><svg width="28" height="28" fill="none" stroke="#fff" stroke-width="1.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="cs-title">Integrated Reports</div><div class="cs-sub">Coming soon — automated board package generation, variance reports, and scheduled distribution.</div><div class="cs-badge">In development</div></div></div>
+
+<div id="board" class="page"><div class="page-hdr"><div><div class="page-title">Board Package</div><div class="page-sub">Board-ready financial summaries and presentation decks</div></div></div><div class="coming-soon"><div class="cs-icon"><svg width="28" height="28" fill="none" stroke="#fff" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div><div class="cs-title">Board Package Generator</div><div class="cs-sub">One-click board-ready package generation with executive commentary, charts, and variance narratives.</div><div class="cs-badge" style="background:linear-gradient(135deg,#FFC532,#E24301);">New Feature</div></div></div>
+
+<div id="benchmarks" class="page"><div class="page-hdr"><div><div class="page-title">Benchmarking</div><div class="page-sub">National peer comparison — Kaufman Hall, HFMA, Moody's</div></div></div><div class="coming-soon"><div class="cs-icon"><svg width="28" height="28" fill="none" stroke="#fff" stroke-width="1.5" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div><div class="cs-title">Benchmarking Module</div><div class="cs-sub">Deep-dive peer benchmarking vs 1,200+ health systems. Drill to service line, payer, and facility level.</div><div class="cs-badge">Module ready</div></div></div>
+
+<div id="forecast" class="page"><div class="page-hdr"><div><div class="page-title">Forecasting</div><div class="page-sub">AI-powered financial forecasting and scenario modeling</div></div></div><div class="coming-soon"><div class="cs-icon"><svg width="28" height="28" fill="none" stroke="#fff" stroke-width="1.5" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg></div><div class="cs-title">AI-Powered Forecasting</div><div class="cs-sub">FY2026 full-year projections, scenario modeling, and sensitivity analysis powered by machine learning.</div><div class="cs-badge" style="background:linear-gradient(135deg,#FFC532,#E24301);">Beta</div></div></div>
+
+<div id="ai" class="page"><div class="page-hdr"><div><div class="page-title">AI Financial Advisor</div><div class="page-sub">Intelligent analysis and recommendations across all financial domains</div></div></div><div class="coming-soon"><div class="cs-icon"><svg width="28" height="28" fill="none" stroke="#fff" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></div><div class="cs-title">AI Financial Advisor</div><div class="cs-sub">4 open action items requiring AI-assisted analysis. Ask questions, model scenarios, and generate corrective action plans.</div><div class="cs-badge" style="background:#E24301;">4 open items</div></div></div>
+
+<div id="settings" class="page"><div class="page-hdr"><div><div class="page-title">Settings</div><div class="page-sub">Platform configuration, data connections, and user management</div></div></div><div class="coming-soon"><div class="cs-icon"><svg width="28" height="28" fill="none" stroke="#fff" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2"/></svg></div><div class="cs-title">Platform Settings</div><div class="cs-sub">EHR connections, user roles, notification preferences, benchmark data sources, and fiscal year configuration.</div></div></div>
+
+</div><!-- /main -->
+</div><!-- /layout -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const Mo=['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun'];
+const fP="'Inter Tight',system-ui,sans-serif";const fS="'Roboto',sans-serif";
+Chart.defaults.font.family=fS;Chart.defaults.font.size=10;
+const tk={family:fS,size:10};
+const R={};
+
+function navTo(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.sidenav-item').forEach(i=>i.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  el.classList.add('active');
+  if(!R[id]){R[id]=true;if(id==='dashboard')initDash('sum');}
+}
+function dashTab(id,el){
+  document.querySelectorAll('.dtab').forEach(t=>t.style.display='none');
+  document.querySelectorAll('.tn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).style.display='';
+  el.classList.add('active');
+  if(!R['dt_'+id]){R['dt_'+id]=true;initDash(id);}
+}
+function facTab(id,el){
+  ['fa','ft','fl'].forEach(s=>{const e=document.getElementById(s);if(e)e.style.display='none';});
+  document.getElementById(id).style.display='';
+  document.querySelectorAll('#fac .st').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  if(!R['fac_'+id]&&id==='fa')buildFacCharts();
+}
+function initDash(t){
+  if(t==='sum'){
+    mkBar('c_revexp',Mo,
+      [{label:'Revenue',data:[148,152,155,149,161,158,162,165,168,171,174,178],bg:'#007F91'},
+       {label:'Expenses',data:[139,142,145,141,149,148,151,153,156,158,161,164],bg:'#E24301'},
+       {label:'Budget',data:[146,149,152,148,159,156,160,163,166,169,172,176],bg:null,bc:'#FFC532',type:'line'}],
+      {ycb:v=>'$'+v+'M'});
+    mkBar('c_regmarg',['West','North','Central','System','East','South'],
+      [{label:'Margin',data:[11.4,10.0,7.1,7.1,3.5,1.9],bg:['#007F91','#007F91','#1797D7','#1797D7','#FFC532','#E24301']},
+       {data:[5.8,5.8,5.8,5.8,5.8,5.8],bg:null,bc:'#FFC532',type:'line'},
+       {data:[7.1,7.1,7.1,7.1,7.1,7.1],bg:null,bc:'#103454',type:'line'}],
+      {ycb:v=>v+'%'});
+  }
+  if(t==='bud'){
+    mkBar('c_bud1',['West','North','Central','East','South'],[{data:[17,26,8,-4,-31],bg:v=>v>=0?'#007F91':'#E24301'}],{ycb:v=>(v>=0?'+$':'-$')+Math.abs(v)+'M'});
+    mkBar('c_bud2',['Labor','Supplies','Overhead','Pharmacy','Purch svcs','Deprec.','Other'],[{data:[-18,4,-8,6,-2,-2,0],bg:v=>v<=0?'#007F91':'#E24301'}],{ycb:v=>(v<=0?'Fav $':'Unfav $')+Math.abs(v)+'M'});
+    const fl=['W Med Ctr','N Campus','W Pavilion','N Specialty','Cntrl Med','N Comm','Cntrl Reg','W Outpt','Cntrl Comm','N Behav','E Regional','E Comm','Cntrl Spec','E Outpt','S Med Ctr','S Regional','E Trauma','S Comm'];
+    mkHBar('c_facbud',fl,[{data:[14,18,6,10,4,2,2,-3,-2,-4,-8,-6,-4,-12,-18,-8,-16,-5],bg:v=>v>=0?'#007F91':'#E24301'}],{xcb:v=>(v>=0?'+$':'-$')+Math.abs(v)+'M',yFont:{family:fP,size:10,weight:'500'}});
+  }
+  if(t==='rev'){
+    new Chart(document.getElementById('c_payer'),{type:'bar',data:{labels:['West','North','Central','East','South'],datasets:[
+      {label:'Commercial',data:[44,40,36,32,28],backgroundColor:'#007F91',stack:'s'},
+      {label:'Medicare',data:[34,36,38,36,34],backgroundColor:'#1797D7',stack:'s'},
+      {label:'Medicare Adv.',data:[14,14,14,14,12],backgroundColor:'#6DC0E0',stack:'s'},
+      {label:'Medicaid',data:[6,8,10,14,22],backgroundColor:'#FFC532',stack:'s'},
+      {label:'Self-pay',data:[2,2,2,4,4],backgroundColor:'#E24301',stack:'s'}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:tk,boxWidth:10}}},scales:{x:{stacked:true,ticks:{font:tk}},y:{stacked:true,ticks:{callback:v=>v+'%',font:tk},max:100}}}});
+    new Chart(document.getElementById('c_revtrend'),{type:'line',data:{labels:Mo,datasets:[
+      {data:[148,152,155,149,161,158,162,165,168,null,null,null],borderColor:'#007F91',tension:.3,pointRadius:2},
+      {data:[140,144,148,142,154,150,154,158,160,162,165,168],borderColor:'#1797D7',borderDash:[4,4],tension:.3,pointRadius:0},
+      {data:[146,149,152,148,159,156,160,163,166,169,172,176],borderColor:'#FFC532',borderDash:[3,3],tension:.3,pointRadius:0}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>'$'+v+'M',font:tk}},x:{ticks:{font:tk}}}}});
+  }
+  if(t==='mar'){
+    new Chart(document.getElementById('c_martrend'),{type:'line',data:{labels:Mo,datasets:[
+      {data:[6.0,6.2,6.4,6.1,6.6,6.8,7.0,7.0,7.1,null,null,null],borderColor:'#007F91',tension:.3,pointRadius:2},
+      {data:[4.8,4.8,4.8,4.8,4.8,4.8,4.8,4.8,4.8,4.8,4.8,4.8],borderColor:'#1797D7',borderDash:[3,3],pointRadius:0},
+      {data:[5.8,5.8,5.8,5.8,5.8,5.8,5.8,5.8,5.8,5.8,5.8,5.8],borderColor:'#FFC532',borderDash:[4,4],pointRadius:0}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>v+'%',font:tk}},x:{ticks:{font:tk}}}}});
+    new Chart(document.getElementById('c_cost'),{type:'bar',data:{labels:['West','North','Central','System','East','South','Natl'],datasets:[
+      {label:'Labor',data:[49.2,50.4,52.1,52.3,54.8,57.4,50.8],backgroundColor:'#007F91',stack:'s'},
+      {label:'Supplies',data:[14.8,15.6,16.4,16.2,18.2,19.8,17.1],backgroundColor:'#1797D7',stack:'s'},
+      {label:'Overhead',data:[13.2,13.6,14.2,14.4,15.4,16.2,14.8],backgroundColor:'#FFC532',stack:'s'},
+      {label:'Other',data:[12.8,12.4,11.7,10.0,8.1,4.7,11.5],backgroundColor:'#828889',stack:'s'}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:tk,boxWidth:10}}},scales:{x:{stacked:true,ticks:{font:tk}},y:{stacked:true,ticks:{callback:v=>v+'%',font:tk},max:100}}}});
+  }
+  if(t==='fac'){buildFacCharts();}
+  if(t==='bmk'){
+    mkBar('c_quartile',['Op. margin','EBIDA','Days cash','Days AR','Labor %','Supply %','Curr. ratio','Debt cov.','Denial','Rev/disch.'],
+      [{data:[68,74,44,38,36,72,70,66,42,76],bg:v=>v>=60?'#007F91':v>=40?'#FFC532':'#E24301'},
+       {data:[75,75,75,75,75,75,75,75,75,75],bg:null,bc:'#1797D7',type:'line'}],
+      {ycb:v=>v+'th',ymin:0,ymax:100,xFont:{family:fS,size:9}});
+  }
+}
+function buildFacCharts(){
+  R['fac_fa']=true;
+  const fl=['W Med Ctr','N Campus','W Pavilion','N Spec','Cntrl Med','N Comm','Cntrl Reg','W Outpt','Cntrl Comm','N Behav','E Regional','E Comm','Cntrl Spec','E Outpt','S Med Ctr','S Regional','E Trauma','S Comm'];
+  mkHBar('c_facmarg',fl,[
+    {data:[14.2,12.8,11.2,10.4,8.6,7.8,7.2,7.0,6.4,6.0,4.2,3.8,3.2,2.8,2.4,1.8,0.8,0.4],bg:v=>v>=7?'#007F91':v>=4?'#FFC532':'#E24301'},
+    {data:Array(18).fill(7.1),bg:null,bc:'#103454',type:'line'},
+    {data:Array(18).fill(5.8),bg:null,bc:'#FFC532',type:'line'}
+  ],{xcb:v=>v+'%',yFont:{family:fP,size:10,weight:'500'}});
+  mkHBar('c_facvar',fl,[{data:[14,18,6,10,4,2,2,-3,-2,-4,-8,-6,-4,-12,-18,-8,-16,-5],bg:v=>v>=0?'#007F91':'#E24301'}],{xcb:v=>(v>=0?'+$':'-$')+Math.abs(v)+'M',yFont:{family:fP,size:10,weight:'500'}});
+}
+function mkBar(id,labels,sets,opts={}){
+  const datasets=sets.map(s=>({
+    label:s.label||'',data:s.data,
+    backgroundColor:typeof s.bg==='function'?s.data.map((_,i)=>({raw:s.data[i]})).map(v=>s.bg(v.raw)):s.bg,
+    borderColor:s.bc,borderDash:s.bc?[4,4]:undefined,
+    pointRadius:s.type==='line'?0:undefined,fill:false,
+    type:s.type||'bar'
+  }));
+  new Chart(document.getElementById(id),{type:'bar',data:{labels,datasets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:opts.ymin,max:opts.ymax,ticks:{callback:opts.ycb||(v=>v),font:opts.xFont||tk}},x:{ticks:{font:opts.xFont||tk,maxRotation:opts.xrot||0}}}}});
+}
+function mkHBar(id,labels,sets,opts={}){
+  const datasets=sets.map(s=>({
+    label:s.label||'',data:s.data,
+    backgroundColor:typeof s.bg==='function'?s.data.map(v=>s.bg(v)):s.bg,
+    borderColor:s.bc,borderDash:s.bc?[4,4]:undefined,
+    pointRadius:s.type==='line'?0:undefined,fill:false,
+    type:s.type||'bar'
+  }));
+  new Chart(document.getElementById(id),{type:'bar',data:{labels,datasets},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{callback:opts.xcb||(v=>v),font:tk}},y:{ticks:{font:opts.yFont||tk}}}}});
+}
+initDash('sum');
+function slFilterChange(){}
+function slTab(id,el){
+  document.querySelectorAll('.sltab').forEach(t=>t.style.display='none');
+  document.querySelectorAll('#slTabs .tn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).style.display='';
+  el.classList.add('active');
+  if(!R['sl_'+id]){R['sl_'+id]=true;initSL(id);}
+}
+function initSL(t){
+  const Mo=['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun'];
+  const SL=['Cardiology','Orthopedics','Oncology','Neurosci.','Med/Surg',"Women's",'Crit. Care','Psych/BH'];
+  const AM=['Surg Svcs','Primary Care','Rehab','Radiology','GI','Lab/Path','Home Hlth','Wound Care'];
+  if(t==='sl-overview'){
+    mkHBar('c_sl_rev',['Med/Surg','Cardiology','Orthopedics','Oncology','Neurosci.','Critical Care',"Women's",'Surg Svcs','Psych/BH','Radiology','Primary Care','GI','Lab/Path','Rehabilitation','Home Hlth','Wound Care'],
+      [{data:[54.4,64.1,54.8,48.2,43.2,27.6,31.4,22.8,14.8,16.8,14.4,12.8,11.4,11.6,8.6,6.4],bg:v=>v>=40?'#007F91':v>=20?'#1797D7':'#828889'}],
+      {xcb:v=>'$'+v+'M',yFont:{family:fP,size:10,weight:'500'}});
+    mkHBar('c_sl_margin',['Cardiology','Orthopedics','Surg Svcs','Oncology','Neurosci.','Primary Care','Med/Surg',"Women's",'Rehab','Radiology','Lab/Path','Crit. Care','GI','Wound Care','Home Hlth','Psych/BH'],
+      [{data:[32.4,29.6,28.1,26.6,23.4,22.2,21.3,21.0,20.7,20.2,19.3,18.8,17.2,-12.5,-14.0,-20.9],bg:v=>v>=20?'#007F91':v>=10?'#FFC532':'#E24301'},{data:Array(16).fill(22.2),bg:null,bc:'#103454',type:'line'}],
+      {xcb:v=>v+'%',yFont:{family:fP,size:10,weight:'500'}});
+  }
+  if(t==='sl-acute'){
+    new Chart(document.getElementById('c_acute_vol'),{type:'line',data:{labels:Mo,datasets:[
+      {label:'Cardiology',data:[380,392,408,388,420,412,418,424,428,null,null,null],borderColor:'#007F91',tension:.3,pointRadius:2,fill:false},
+      {label:'Orthopedics',data:[248,256,272,260,288,280,284,292,294,null,null,null],borderColor:'#1797D7',tension:.3,pointRadius:2,fill:false},
+      {label:'Med/Surg',data:[1480,1520,1560,1500,1620,1580,1620,1640,1660,null,null,null],borderColor:'#FFC532',tension:.3,pointRadius:2,fill:false},
+      {label:'Oncology',data:[168,174,182,176,192,188,192,196,198,null,null,null],borderColor:'#E24301',tension:.3,pointRadius:2,fill:false}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:tk,boxWidth:10}}},scales:{y:{ticks:{font:tk}},x:{ticks:{font:tk}}}}});
+    mkBar('c_los',SL,[{label:'Actual LOS',data:[3.8,2.9,5.4,5.2,4.9,2.4,8.6,12.4],bg:v=>v>6?'#E24301':v>4?'#FFC532':'#007F91'},{label:'Natl',data:[4.1,3.2,5.1,4.8,4.4,2.6,7.4,9.8],bg:null,bc:'#FFC532',type:'line'}],{ycb:v=>v+' d',xrot:20});
+    new Chart(document.getElementById('c_acute_payer'),{type:'bar',data:{labels:SL,datasets:[
+      {label:'Commercial',data:[44,38,32,36,30,42,28,18],backgroundColor:'#007F91',stack:'s'},
+      {label:'Medicare',data:[32,40,38,36,32,28,38,22],backgroundColor:'#1797D7',stack:'s'},
+      {label:'Medicare Adv.',data:[14,14,16,14,14,16,18,8],backgroundColor:'#6DC0E0',stack:'s'},
+      {label:'Medicaid',data:[6,6,12,12,20,12,14,46],backgroundColor:'#FFC532',stack:'s'},
+      {label:'Self-pay',data:[4,2,2,2,4,2,2,6],backgroundColor:'#E24301',stack:'s'}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:tk,boxWidth:10}}},scales:{x:{stacked:true,ticks:{font:tk}},y:{stacked:true,ticks:{callback:v=>v+'%',font:tk},max:100}}}});
+    mkBar('c_rev_discharge',SL,[{data:[13300,16910,22110,11870,2980,4600,16830,3590],bg:v=>v>=10000?'#007F91':v>=5000?'#1797D7':'#828889'}],{ycb:v=>'$'+v.toLocaleString(),xrot:20});
+  }
+  if(t==='sl-ambulatory'){
+    mkBar('c_amb_vol',AM,[{data:[8640,42800,28400,62400,9840,184000,3640,4200],bg:v=>v>=50000?'#007F91':v>=10000?'#1797D7':'#828889'}],{ycb:v=>v>=1000?Math.round(v/1000)+'K':v,xrot:20});
+    mkBar('c_amb_margin',AM,[{data:[28.1,22.2,20.7,20.2,17.2,19.3,-14.0,-12.5],bg:v=>v>=20?'#007F91':v>=10?'#FFC532':'#E24301'},{data:[22.2,22.2,22.2,22.2,22.2,22.2,22.2,22.2],bg:null,bc:'#103454',type:'line'}],{ycb:v=>v+'%',xrot:20});
+    new Chart(document.getElementById('c_amb_trend'),{type:'line',data:{labels:['Q1 FY25','Q2 FY25','Q3 FY25','Q4 FY25','Q1 FY26','Q2 FY26','Q3 FY26'],datasets:[
+      {label:'FY2026',data:[null,null,null,null,24.2,26.8,28.4],borderColor:'#007F91',tension:.3,pointRadius:3,fill:false},
+      {label:'FY2025',data:[20.4,22.1,23.6,24.8,null,null,null],borderColor:'#1797D7',borderDash:[4,4],tension:.3,pointRadius:2,fill:false},
+      {label:'Budget',data:[22.0,23.5,25.0,26.0,25.4,27.2,29.0],borderColor:'#FFC532',borderDash:[3,3],tension:.3,pointRadius:0,fill:false}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:tk,boxWidth:10}}},scales:{y:{ticks:{callback:v=>'$'+v+'M',font:tk}},x:{ticks:{font:tk}}}}});
+  }
+  if(t==='sl-supply'){
+    new Chart(document.getElementById('c_supply_bar'),{type:'bar',data:{labels:['Orthopedics','Oncology','Cardiology','Crit. Care','Surg Svcs','Neurosci.','Other'],datasets:[{label:'Actual',data:[14.2,13.6,10.8,8.4,6.2,5.8,5.8],backgroundColor:'#007F91'},{label:'Budget',data:[13.0,13.0,11.2,8.0,6.4,5.6,5.9],backgroundColor:'rgba(255,197,50,.6)'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:tk,boxWidth:10}}},scales:{x:{ticks:{font:tk}},y:{ticks:{callback:v=>'$'+v+'M',font:tk}}}}});
+    mkBar('c_supply_pct',['Crit. Care','Oncology','Surg Svcs','Orthopedics','Cardiology','Neurosci.','Med/Surg'],[{data:[30.4,28.2,27.2,25.9,16.8,13.4,11.8],bg:v=>v>=28?'#E24301':v>=22?'#FFC532':'#007F91'},{data:[22,22,22,22,22,22,22],bg:null,bc:'#103454',type:'line'}],{ycb:v=>v+'%',xrot:20});
+    new Chart(document.getElementById('c_supply_cat'),{type:'bar',data:{labels:['Implants','Pharmacy','Med/Surg supplies','Radiology','Lab reagents','PPE','Other'],datasets:[{label:'Actual',data:[18.4,22.6,10.8,6.2,3.8,1.6,1.4],backgroundColor:'#007F91'},{label:'Budget',data:[17.2,22.4,10.4,6.0,3.6,1.8,1.6],backgroundColor:'rgba(255,197,50,.6)'},{label:'Variance',data:[1.2,0.2,0.4,0.2,0.2,-0.2,-0.2],backgroundColor:'rgba(226,67,1,.7)'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:tk,boxWidth:10}}},scales:{x:{ticks:{font:tk}},y:{ticks:{callback:v=>'$'+v+'M',font:tk}}}}});
+  }
+  if(t==='sl-physician'){
+    const surg=['Dr. M. Patel','Dr. K. Lee','Dr. J. Smith','Dr. A. Kumar','Dr. T. Brown','Dr. C. Davis','Dr. B. Wilson','Dr. R. Moore','Dr. H. Taylor','Dr. S. Anderson','Dr. F. Thomas','Dr. J. Jackson','Dr. W. White','Dr. L. Harris','Dr. D. Martin','Dr. P. Garcia','Dr. N. Martinez','Dr. O. Robinson','Dr. Q. Clark','Dr. L. Garcia'];
+    mkHBar('c_phys_supply',surg,[{data:[10240,10800,11200,11600,11900,12200,12600,12900,13400,13800,14200,14600,15200,15800,16400,16900,17400,17800,18200,18640],bg:v=>v<=12000?'#007F91':v<=15000?'#FFC532':'#E24301'},{data:Array(20).fill(13200),bg:null,bc:'#103454',type:'line'}],{xcb:v=>'$'+v.toLocaleString(),yFont:{family:fS,size:9}});
+    mkBar('c_phys_los',['Q1 (Top)','Q2','Q3','Q4 (Bottom)'],[{data:[0.88,0.98,1.14,1.36],bg:v=>v<=0.95?'#007F91':v<=1.05?'#1797D7':v<=1.15?'#FFC532':'#E24301'},{data:[1,1,1,1],bg:null,bc:'#828889',type:'line'}],{ycb:v=>v.toFixed(2)+'x'});
+  }
+  if(t==='sl-encounter'){
+    new Chart(document.getElementById('c_enc_trend'),{type:'bar',data:{labels:Mo,datasets:[
+      {label:'Inpatient',data:[3620,3740,3860,3700,4020,3940,4020,4080,4140,null,null,null],backgroundColor:'#007F91',stack:'s'},
+      {label:'Ambulatory',data:[26800,27400,28200,27600,29400,28800,29600,30200,30600,null,null,null],backgroundColor:'#1797D7',stack:'s'},
+      {label:'Observation',data:[820,848,876,840,912,896,916,928,944,null,null,null],backgroundColor:'#FFC532',stack:'s'},
+      {label:'ED',data:[6200,6400,6600,6300,6800,6700,6820,6900,6960,null,null,null],backgroundColor:'rgba(226,67,1,.7)',stack:'s'}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:tk,boxWidth:10}}},scales:{x:{stacked:true,ticks:{font:tk}},y:{stacked:true,ticks:{font:tk}}}}});
+    mkBar('c_enc_rev',['Inpatient','Amb. Surgery','ED','Observation','Home Hlth','Clinic'],[{data:[7572,2640,830,2250,2362,305],bg:v=>v>=2000?'#007F91':v>=500?'#1797D7':'#828889'},{data:[7200,2500,800,2100,2600,290],bg:null,bc:'#FFC532',type:'line'}],{ycb:v=>'$'+v.toLocaleString(),xrot:20});
+    mkHBar('c_drg',['Cardiac valve','CABG w CC','Spinal fusion','Major joint repl','Septicemia','Maj joint lower','Hip & femur','Trach w MV','Craniotomy','Heart failure','Pneumonia','Stroke','Kidney trans.','Cellulitis','Chemotherapy','Renal failure','GI bleed','Chest pain','Appendectomy','Back problems'],
+      [{data:[8.4,7.2,6.8,6.4,5.8,5.4,4.8,4.4,4.2,3.8,3.6,3.2,3.0,2.8,2.6,2.4,2.2,2.0,1.8,1.6],bg:v=>v>=5?'#007F91':v>=3?'#1797D7':'#828889'}],
+      {xcb:v=>'$'+v+'M',yFont:{family:fS,size:9}});
+  }
+}
+const _baseNavTo=navTo;
+navTo=function(id,el){
+  _baseNavTo(id,el);
+  if(id==='serviceline'&&!R['sl_sl-overview']){
+    R['sl_sl-overview']=true;
+    document.getElementById('sl-overview').style.display='';
+    initSL('sl-overview');
+  }
+};
+
+function caTab(id,el){
+  document.querySelectorAll('.catab').forEach(t=>t.style.display='none');
+  document.querySelectorAll('#caTabs .tn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).style.display='';
+  el.classList.add('active');
+  if(!R['ca_'+id]){R['ca_'+id]=true;initCA(id);}
+}
+function initCA(t){
+  const Mo=['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun'];
+  const fac18=['W Med Ctr','N Campus','W Pavilion','N Specialty','Cntrl Med','N Comm','Cntrl Reg','W Outpt','Cntrl Comm','N Behav','E Regional','E Comm','Cntrl Spec','E Outpt','S Med Ctr','S Regional','E Trauma','S Comm'];
+  if(t==='ca-gl'){
+    new Chart(document.getElementById('c_gl_monthly'),{type:'bar',data:{labels:Mo,datasets:[
+      {label:'Labor',data:[17.8,18.2,18.6,17.4,19.2,18.8,19.2,19.4,null,null,null,null],backgroundColor:'#007F91',stack:'s'},
+      {label:'Supplies',data:[6.8,7.0,7.2,6.8,7.4,7.2,7.4,7.6,null,null,null,null],backgroundColor:'#1797D7',stack:'s'},
+      {label:'Purch. Svcs',data:[4.0,4.2,4.4,4.0,4.6,4.4,4.6,4.8,null,null,null,null],backgroundColor:'#FFC532',stack:'s'},
+      {label:'Other',data:[2.4,2.6,2.8,2.4,3.0,2.8,3.0,3.2,null,null,null,null],backgroundColor:'#828889',stack:'s'}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:tk,boxWidth:10}}},scales:{x:{stacked:true,ticks:{font:tk}},y:{stacked:true,ticks:{callback:v=>'$'+v+'M',font:tk}}}}});
+    mkBar('c_gl_capture',['W Med Ctr','N Campus','Cntrl Med','W Pavilion','N Specialty','Cntrl Reg','N Comm','W Outpt','E Regional','E Comm','S Med Ctr','E Trauma','S Regional','S Comm','N Behav','Cntrl Spec','Cntrl Comm','E Outpt'],
+      [{data:[99.8,99.4,99.2,99.0,98.8,98.4,98.2,97.8,97.2,96.8,96.4,95.8,95.4,94.8,94.2,93.6,93.0,92.4],bg:v=>v>=98?'#007F91':v>=96?'#FFC532':'#E24301'},
+       {data:Array(18).fill(99.0),bg:null,bc:'#103454',type:'line'}],
+      {ycb:v=>v+'%',xrot:20,ymin:90,ymax:100});
+    new Chart(document.getElementById('c_gl_cat'),{type:'bar',data:{
+      labels:['Salaries','Benefits','Supplies','Pharmacy','Purch Svcs','Deprec.','Overhead','Implants','Other'],
+      datasets:[
+        {label:'Actual',data:[128.4,35.0,28.4,22.6,38.4,18.4,22.8,10.6,7.8],backgroundColor:'#007F91'},
+        {label:'Budget',data:[124.8,34.0,28.0,22.4,36.8,18.6,22.4,9.8,7.4],backgroundColor:'rgba(255,197,50,.6)'}
+      ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:tk,boxWidth:10}}},scales:{x:{ticks:{font:tk,maxRotation:20}},y:{ticks:{callback:v=>'$'+v+'M',font:tk}}}}});
+    new Chart(document.getElementById('c_gl_labor'),{type:'line',data:{labels:['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'],datasets:[
+      {label:'System',data:[51.4,51.6,51.8,51.2,52.0,52.2,52.4,52.4,52.3],borderColor:'#007F91',tension:.3,pointRadius:3,fill:false},
+      {label:'Natl benchmark',data:[50.8,50.8,50.8,50.8,50.8,50.8,50.8,50.8,50.8],borderColor:'#FFC532',borderDash:[4,4],pointRadius:0,fill:false},
+      {label:'Budget target',data:[51.0,51.0,51.0,51.0,51.0,51.0,51.0,51.0,51.0],borderColor:'#E24301',borderDash:[3,3],pointRadius:0,fill:false}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:tk,boxWidth:10}}},scales:{y:{min:49,max:54,ticks:{callback:v=>v+'%',font:tk}},x:{ticks:{font:tk}}}}});
+  }
+  if(t==='ca-objects'){
+    new Chart(document.getElementById('c_obj_type'),{type:'bar',data:{
+      labels:['Dept. cost ctrs','Physician offices','Procedure codes','Diagnosis codes','Supply items','Revenue codes','Patient accounts','Contract terms'],
+      datasets:[
+        {label:'Count (thousands)',data:[1.8,0.4,12.4,18.6,22.8,8.4,14.2,5.6],backgroundColor:'#007F91',yAxisID:'y'},
+        {label:'Assigned cost ($M)',data:[164.2,8.4,42.8,14.6,64.8,10.2,4.8,2.6],backgroundColor:'rgba(255,197,50,.6)',yAxisID:'y2'}
+      ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:tk,boxWidth:10}}},scales:{
+        y:{position:'left',ticks:{callback:v=>v+'K',font:tk}},
+        y2:{position:'right',grid:{drawOnChartArea:false},ticks:{callback:v=>'$'+v+'M',font:tk}},
+        x:{ticks:{font:tk,maxRotation:20}}
+      }}});
+    mkBar('c_obj_util',['W Med Ctr','N Campus','Cntrl Med','W Pavilion','N Spec.','Cntrl Reg','N Comm','W Outpt','E Regional','E Comm','S Med Ctr','E Trauma','S Reg.','S Comm','N Behav','Cntrl Spec','Cntrl Comm','E Outpt'],
+      [{data:[98.2,97.4,96.8,96.4,96.0,95.6,95.2,94.8,93.4,92.8,87.6,88.6,88.0,87.2,86.8,86.4,85.8,85.2],bg:v=>v>=96?'#007F91':v>=92?'#FFC532':'#E24301'},
+       {data:Array(18).fill(96),bg:null,bc:'#103454',type:'line'}],
+      {ycb:v=>v+'%',xrot:20,ymin:82,ymax:100});
+  }
+  if(t==='ca-classify'){
+    new Chart(document.getElementById('c_class_sl'),{type:'bar',data:{
+      labels:['Cardiology','Orthopedics','Oncology','Neurosci.','Med/Surg','Critical Care',"Women's",'Psych/BH'],
+      datasets:[
+        {label:'Direct',data:[28.4,24.6,22.8,19.2,26.4,14.2,15.8,10.4],backgroundColor:'#007F91',stack:'s'},
+        {label:'Indirect',data:[9.4,8.4,7.8,8.2,10.2,5.2,5.6,4.8],backgroundColor:'#1797D7',stack:'s'},
+        {label:'Overhead',data:[5.5,5.6,4.8,5.7,6.2,3.0,3.4,2.7],backgroundColor:'rgba(255,197,50,.6)',stack:'s'}
+      ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:tk,boxWidth:10}}},scales:{x:{stacked:true,ticks:{font:tk,maxRotation:20}},y:{stacked:true,ticks:{callback:v=>'$'+v+'M',font:tk}}}}});
+    new Chart(document.getElementById('c_class_direct'),{type:'bar',data:{
+      labels:['Implants','Pharmacy','Med/surg','Benefits','Salaries','Depreciation','Purch Svcs','Other ops','Overhead'],
+      datasets:[
+        {label:'System direct %',data:[98.1,94.7,94.4,73.1,73.4,34.8,38.5,28.2,0.0],backgroundColor:function(ctx){const v=ctx.raw;return v>=70?'#007F91':v>=40?'#FFC532':'#E24301';}},
+        {label:'Natl median %',data:[96.8,92.4,91.8,68.2,68.2,34.2,42.4,34.4,0.0],backgroundColor:'rgba(23,151,215,.25)'}
+      ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:tk,boxWidth:10}}},scales:{x:{ticks:{font:tk,maxRotation:20}},y:{max:100,ticks:{callback:v=>v+'%',font:tk}}}}});
+  }
+  if(t==='ca-alloc'){
+    new Chart(document.getElementById('c_alloc_flow'),{type:'bar',data:{
+      labels:['Admin','Facilities','IT','Env Svcs','Purch Svcs','Other 18','Central Sterile','HR','Finance','Med Records','Risk Mgmt','Laundry'],
+      datasets:[
+        {label:'Allocated out',data:[41.4,22.8,18.2,12.4,11.2,59.2,7.8,8.6,6.4,4.8,3.6,2.4],backgroundColor:'#007F91'},
+        {label:'Dead-ended',data:[1.4,0,0.2,0,0,1.6,0.4,0,0,0,0,0.8],backgroundColor:'#E24301'}
+      ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:tk,boxWidth:10}}},scales:{x:{stacked:false,ticks:{font:tk,maxRotation:20}},y:{ticks:{callback:v=>'$'+v+'M',font:tk}}}}});
+    mkBar('c_dead_end',['Facilities','HR','Env Svcs','Med Records','Finance','Risk Mgmt','IT','Admin','Other 18','Central Sterile','Laundry'],
+      [{data:[100,100,100,100,100,100,98.9,96.7,97.4,95.1,75.0],bg:v=>v>=99?'#007F91':v>=96?'#FFC532':'#E24301'},
+       {data:Array(11).fill(100),bg:null,bc:'#103454',type:'line'}],
+      {ycb:v=>v+'%',xrot:20,ymin:70,ymax:102});
+  }
+  if(t==='ca-unitcost'){
+    const SL=['Cardiology','Orthopedics','Oncology','Neurosci.','Med/Surg','Critical Care',"Women's",'Psych/BH'];
+    new Chart(document.getElementById('c_uc_discharge'),{type:'bar',data:{labels:SL,datasets:[
+      {label:'System cost/discharge',data:[8984,11914,16238,9093,2347,13659,3636,4345],backgroundColor:function(ctx){const v=ctx.raw,n=[9200,12400,16800,9600,2600,14200,3800,4800][ctx.dataIndex];return v<=n?'#007F91':'#E24301';}},
+      {label:'Natl median',data:[9200,12400,16800,9600,2600,14200,3800,4800],backgroundColor:'rgba(255,197,50,.5)'}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:tk,boxWidth:10}}},scales:{x:{ticks:{font:tk,maxRotation:20}},y:{ticks:{callback:v=>'$'+v.toLocaleString(),font:tk}}}}});
+    new Chart(document.getElementById('c_uc_trend'),{type:'line',data:{labels:['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'],datasets:[
+      {label:'System',data:[7124,7086,7048,7192,6968,6944,6920,6952,6988],borderColor:'#007F91',tension:.3,pointRadius:3,fill:false},
+      {label:'Natl median',data:[7240,7240,7240,7240,7240,7240,7240,7240,7240],borderColor:'#FFC532',borderDash:[4,4],pointRadius:0,fill:false},
+      {label:'Budget',data:[7100,7080,7060,7040,7020,7000,6980,6960,6940],borderColor:'#1797D7',borderDash:[3,3],pointRadius:0,fill:false}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:tk,boxWidth:10}}},scales:{y:{ticks:{callback:v=>'$'+v.toLocaleString(),font:tk}},x:{ticks:{font:tk}}}}});
+  }
+  if(t==='ca-patient'){
+    mkBar('c_pat_dist',['<$2K','$2K-$5K','$5K-$10K','$10K-$20K','$20K-$40K','$40K-$80K','>$80K'],
+      [{data:[6200,12400,11800,7400,4200,1800,900],bg:v=>v>=10000?'#007F91':v>=5000?'#1797D7':'#828889'}],
+      {ycb:v=>v>=1000?Math.round(v/1000)+'K':v});
+    new Chart(document.getElementById('c_pat_margin'),{type:'bar',data:{labels:['Cardiology','Orthopedics','Oncology','Neurosci.','Med/Surg',"Women's",'Crit. Care','Psych/BH'],datasets:[
+      {label:'Actual',data:[4316,4996,5872,2775,635,968,3170,-753],backgroundColor:function(ctx){return ctx.raw>=0?'#007F91':'#E24301';}},
+      {label:'Budget',data:[4200,4800,5600,2600,600,900,3000,-600],backgroundColor:'rgba(255,197,50,.5)'}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:tk,boxWidth:10}}},scales:{x:{ticks:{font:tk,maxRotation:20}},y:{ticks:{callback:v=>'$'+v.toLocaleString(),font:tk}}}}});
+    new Chart(document.getElementById('c_pat_payer'),{type:'bar',data:{labels:['Commercial','Medicare','Medicare Adv.','Medicaid','Self-pay'],datasets:[
+      {label:'Net revenue/case',data:[12400,8200,7800,4200,2800],backgroundColor:'#007F91'},
+      {label:'Total cost/case',data:[7800,7200,7400,6800,8400],backgroundColor:'rgba(226,67,1,.7)'}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:tk,boxWidth:10}}},scales:{x:{ticks:{font:tk}},y:{ticks:{callback:v=>'$'+v.toLocaleString(),font:tk}}}}});
+    new Chart(document.getElementById('c_pat_pareto'),{type:'bar',data:{labels:['Top 1%','2-5%','6-10%','11-20%','21-40%','41-60%','61-80%','Bottom 20%'],datasets:[
+      {label:'% of total cost',data:[18,24,16,14,12,8,5,3],backgroundColor:'#007F91',yAxisID:'y'},
+      {label:'Cumulative %',data:[18,42,58,72,84,92,97,100],type:'line',borderColor:'#FFC532',pointRadius:3,fill:false,yAxisID:'y2'}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:tk,boxWidth:10}}},scales:{
+      y:{max:30,ticks:{callback:v=>v+'%',font:tk}},
+      y2:{position:'right',max:100,grid:{drawOnChartArea:false},ticks:{callback:v=>v+'%',font:tk}},
+      x:{ticks:{font:tk,maxRotation:20}}
+    }}});
+  }
+}
+// Wire up CA nav — init GL tab automatically
+const _prevNavTo=navTo;
+navTo=function(id,el){
+  _prevNavTo(id,el);
+  if(id==='cost'&&!R['ca_ca-gl']){
+    R['ca_ca-gl']=true;
+    document.getElementById('ca-gl').style.display='';
+    initCA('ca-gl');
+  }
+};
+
+</script>
+</body>
+</html>
