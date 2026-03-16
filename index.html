@@ -581,6 +581,26 @@ select{font-family:var(--fs);padding:5px 8px;font-size:12px;border:1px solid #C8
   </div>
 
   <!-- TAB 1: GL EXPENSE CAPTURE -->
+  <div id="ca-costobj" class="catab" style="display:none;">
+    <div class="sqt">Cost objects define the units to which costs are assigned — DRGs, procedures, physician encounters, and service lines. The system tracks 84,218 active cost objects across 18 facilities with a 98.4% capture rate.</div>
+    <div class="four" style="margin-bottom:14px;">
+      <div class="mc b"><div class="ml">Active cost objects</div><div class="mv">84,218</div><div class="md up">↑ 2,140 added YTD</div></div>
+      <div class="mc b"><div class="ml">DRG cost objects</div><div class="mv">1,284</div><div class="md">Active DRG groups</div></div>
+      <div class="mc y"><div class="ml">Utilization rate</div><div class="mv am">94.2%</div><div class="md">System avg vs 99% target</div></div>
+      <div class="mc o"><div class="ml">Inactive objects</div><div class="mv dn2">4,860</div><div class="md dn2">Pending cleanup review</div></div>
+    </div>
+    <div class="two">
+      <div class="card">
+        <div class="ct" style="margin-bottom:8px;">Cost objects by type — active vs inactive</div>
+        <div class="cw" style="height:240px;"><canvas id="c_costobj_type"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="ct" style="margin-bottom:8px;">Utilization rate by facility (%) — target 99%</div>
+        <div class="cw" style="height:240px;"><canvas id="c_costobj_util"></canvas></div>
+      </div>
+    </div>
+  </div>
+
   <div id="ca-gl" class="catab">
     <div class="five">
       <div class="mc b"><div class="ml">Total GL expenses</div><div class="mv">$312.4M</div><div class="md up">&#8593; 3.8% vs PY</div><div class="mn">Budget $308.2M <span class="vn">+$4.2M unfav</span></div></div>
@@ -3006,7 +3026,7 @@ function dashTab(id,el){
   document.querySelectorAll('.tn').forEach(b=>b.classList.remove('active'));
   document.getElementById(id).style.display='';
   el.classList.add('active');
-  if(!R['dt_'+id]){R['dt_'+id]=true;initDash(id);}
+  initDash(id);
 }
 function facTab(id,el){
   ['fa','ft','fl'].forEach(s=>{const e=document.getElementById(s);if(e)e.style.display='none';});
@@ -3035,26 +3055,26 @@ function initDash(t){
     mkHBar('c_facbud',fl,[{data:[14,18,6,10,4,2,2,-3,-2,-4,-8,-6,-4,-12,-18,-8,-16,-5],bg:v=>v>=0?'#007F91':'#E24301'}],{xcb:v=>(v>=0?'+$':'-$')+Math.abs(v)+'M',yFont:{family:fP,size:10,weight:'500'}});
   }
   if(t==='rev'){
-    new Chart(document.getElementById('c_payer'),{type:'bar',data:{labels:['West','North','Central','East','South'],datasets:[
+    mkChart('c_payer',{type:'bar',data:{labels:['West','North','Central','East','South'],datasets:[
       {label:'Commercial',data:[44,40,36,32,28],backgroundColor:'#007F91',stack:'s'},
       {label:'Medicare',data:[34,36,38,36,34],backgroundColor:'#1797D7',stack:'s'},
       {label:'Medicare Adv.',data:[14,14,14,14,12],backgroundColor:'#6DC0E0',stack:'s'},
       {label:'Medicaid',data:[6,8,10,14,22],backgroundColor:'#FFC532',stack:'s'},
       {label:'Self-pay',data:[2,2,2,4,4],backgroundColor:'#E24301',stack:'s'}
     ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:tk,boxWidth:10}}},scales:{x:{stacked:true,ticks:{font:tk}},y:{stacked:true,ticks:{callback:v=>v+'%',font:tk},max:100}}}});
-    new Chart(document.getElementById('c_revtrend'),{type:'line',data:{labels:Mo,datasets:[
+    mkChart('c_revtrend',{type:'line',data:{labels:Mo,datasets:[
       {data:[148,152,155,149,161,158,162,165,168,null,null,null],borderColor:'#007F91',tension:.3,pointRadius:2},
       {data:[140,144,148,142,154,150,154,158,160,162,165,168],borderColor:'#1797D7',borderDash:[4,4],tension:.3,pointRadius:0},
       {data:[146,149,152,148,159,156,160,163,166,169,172,176],borderColor:'#FFC532',borderDash:[3,3],tension:.3,pointRadius:0}
     ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>'$'+v+'M',font:tk}},x:{ticks:{font:tk}}}}});
   }
   if(t==='mar'){
-    new Chart(document.getElementById('c_martrend'),{type:'line',data:{labels:Mo,datasets:[
+    mkChart('c_martrend',{type:'line',data:{labels:Mo,datasets:[
       {data:[6.0,6.2,6.4,6.1,6.6,6.8,7.0,7.0,7.1,null,null,null],borderColor:'#007F91',tension:.3,pointRadius:2},
       {data:[4.8,4.8,4.8,4.8,4.8,4.8,4.8,4.8,4.8,4.8,4.8,4.8],borderColor:'#1797D7',borderDash:[3,3],pointRadius:0},
       {data:[5.8,5.8,5.8,5.8,5.8,5.8,5.8,5.8,5.8,5.8,5.8,5.8],borderColor:'#FFC532',borderDash:[4,4],pointRadius:0}
     ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>v+'%',font:tk}},x:{ticks:{font:tk}}}}});
-    new Chart(document.getElementById('c_cost'),{type:'bar',data:{labels:['West','North','Central','System','East','South','Natl'],datasets:[
+    mkChart('c_cost',{type:'bar',data:{labels:['West','North','Central','System','East','South','Natl'],datasets:[
       {label:'Labor',data:[49.2,50.4,52.1,52.3,54.8,57.4,50.8],backgroundColor:'#007F91',stack:'s'},
       {label:'Supplies',data:[14.8,15.6,16.4,16.2,18.2,19.8,17.1],backgroundColor:'#1797D7',stack:'s'},
       {label:'Overhead',data:[13.2,13.6,14.2,14.4,15.4,16.2,14.8],backgroundColor:'#FFC532',stack:'s'},
@@ -3079,7 +3099,18 @@ function buildFacCharts(){
   ],{xcb:v=>v+'%',yFont:{family:fP,size:10,weight:'500'}});
   mkHBar('c_facvar',fl,[{data:[14,18,6,10,4,2,2,-3,-2,-4,-8,-6,-4,-12,-18,-8,-16,-5],bg:v=>v>=0?'#007F91':'#E24301'}],{xcb:v=>(v>=0?'+$':'-$')+Math.abs(v)+'M',yFont:{family:fP,size:10,weight:'500'}});
 }
+
+// Chart destroy helper - ensures no canvas reuse errors
+function mkChart(id, config) {
+  const el = document.getElementById(id);
+  if (!el) return null;
+  const existing = Chart.getChart(el);
+  if (existing) existing.destroy();
+  return new Chart(el, config);
+}
 function mkBar(id,labels,sets,opts={}){
+  const el=document.getElementById(id); if(!el)return;
+  const existing=Chart.getChart(el); if(existing)existing.destroy();
   const datasets=sets.map(s=>({
     label:s.label||'',data:s.data,
     backgroundColor:typeof s.bg==='function'?s.data.map((_,i)=>({raw:s.data[i]})).map(v=>s.bg(v.raw)):s.bg,
@@ -3087,9 +3118,11 @@ function mkBar(id,labels,sets,opts={}){
     pointRadius:s.type==='line'?0:undefined,fill:false,
     type:s.type||'bar'
   }));
-  new Chart(document.getElementById(id),{type:'bar',data:{labels,datasets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:opts.ymin,max:opts.ymax,ticks:{callback:opts.ycb||(v=>v),font:opts.xFont||tk}},x:{ticks:{font:opts.xFont||tk,maxRotation:opts.xrot||0}}}}});
+  new Chart(el,{type:'bar',data:{labels,datasets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:opts.ymin,max:opts.ymax,ticks:{callback:opts.ycb||(v=>v),font:opts.xFont||tk}},x:{ticks:{font:opts.xFont||tk,maxRotation:opts.xrot||0}}}}});
 }
 function mkHBar(id,labels,sets,opts={}){
+  const el=document.getElementById(id); if(!el)return;
+  const existing=Chart.getChart(el); if(existing)existing.destroy();
   const datasets=sets.map(s=>({
     label:s.label||'',data:s.data,
     backgroundColor:typeof s.bg==='function'?s.data.map(v=>s.bg(v)):s.bg,
@@ -3097,7 +3130,7 @@ function mkHBar(id,labels,sets,opts={}){
     pointRadius:s.type==='line'?0:undefined,fill:false,
     type:s.type||'bar'
   }));
-  new Chart(document.getElementById(id),{type:'bar',data:{labels,datasets},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{callback:opts.xcb||(v=>v),font:tk}},y:{ticks:{font:opts.yFont||tk}}}}});
+  new Chart(el,{type:'bar',data:{labels,datasets},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{callback:opts.xcb||(v=>v),font:tk}},y:{ticks:{font:opts.yFont||tk}}}}});
 }
 // Ensure charts render after Chart.js is fully loaded
 function slFilterChange(){}
@@ -3634,8 +3667,8 @@ function openDRGDrill(drg,desc,sl,cases){
 
 function initEncDenial(){
   buildDenialTable();
-  new Chart(document.getElementById('c_denial_reason'),{type:'doughnut',data:{labels:['Medical necessity','Authorization','Coding error','Missing docs','Timely filing','Coordination of benefits'],datasets:[{data:[6.2,4.8,3.6,2.4,1.4,0.9],backgroundColor:['#E24301','#FFC532','#1797D7','#007F91','#6DC0E0','#828889']}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:tk,boxWidth:8}}}}});
-  new Chart(document.getElementById('c_denial_trend'),{type:'line',data:{labels:['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'],datasets:[
+  mkChart('c_denial_reason',{type:'doughnut',data:{labels:['Medical necessity','Authorization','Coding error','Missing docs','Timely filing','Coordination of benefits'],datasets:[{data:[6.2,4.8,3.6,2.4,1.4,0.9],backgroundColor:['#E24301','#FFC532','#1797D7','#007F91','#6DC0E0','#828889']}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:tk,boxWidth:8}}}}});
+  mkChart('c_denial_trend',{type:'line',data:{labels:['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'],datasets:[
     {label:'Actual',data:[4.2,4.4,4.8,4.6,5.0,4.8,5.2,5.0,4.8],borderColor:'#E24301',tension:.3,pointRadius:3,fill:false},
     {label:'Target',data:[4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0],borderColor:'#FFC532',borderDash:[4,4],pointRadius:0,fill:false},
     {label:'Natl avg',data:[3.8,3.8,3.8,3.8,3.8,3.8,3.8,3.8,3.8],borderColor:'#1797D7',borderDash:[3,3],pointRadius:0,fill:false}
@@ -3668,7 +3701,7 @@ function slTab(id,el){
   document.querySelectorAll('#slTabs .tn').forEach(b=>b.classList.remove('active'));
   document.getElementById(id).style.display='';
   el.classList.add('active');
-  if(!R['sl_'+id]){R['sl_'+id]=true;initSL(id);}
+  initSL(id);
 }
 function initSL(t){
   const Mo=['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun'];
@@ -3686,14 +3719,14 @@ function initSL(t){
   if(t==='sl-acute'){
     buildAcuteTable();
     acuteSelect('Cardiology',null);
-    new Chart(document.getElementById('c_acute_vol'),{type:'line',data:{labels:Mo,datasets:[
+    mkChart('c_acute_vol',{type:'line',data:{labels:Mo,datasets:[
       {label:'Cardiology',data:[380,392,408,388,420,412,418,424,428,null,null,null],borderColor:'#007F91',tension:.3,pointRadius:2,fill:false},
       {label:'Orthopedics',data:[248,256,272,260,288,280,284,292,294,null,null,null],borderColor:'#1797D7',tension:.3,pointRadius:2,fill:false},
       {label:'Med/Surg',data:[1480,1520,1560,1500,1620,1580,1620,1640,1660,null,null,null],borderColor:'#FFC532',tension:.3,pointRadius:2,fill:false},
       {label:'Oncology',data:[168,174,182,176,192,188,192,196,198,null,null,null],borderColor:'#E24301',tension:.3,pointRadius:2,fill:false}
     ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:tk,boxWidth:10}}},scales:{y:{ticks:{font:tk}},x:{ticks:{font:tk}}}}});
     mkBar('c_los',SL,[{label:'Actual LOS',data:[3.8,2.9,5.4,5.2,4.9,2.4,8.6,12.4],bg:v=>v>6?'#E24301':v>4?'#FFC532':'#007F91'},{label:'Natl',data:[4.1,3.2,5.1,4.8,4.4,2.6,7.4,9.8],bg:null,bc:'#FFC532',type:'line'}],{ycb:v=>v+' d',xrot:20});
-    new Chart(document.getElementById('c_acute_payer'),{type:'bar',data:{labels:SL,datasets:[
+    mkChart('c_acute_payer',{type:'bar',data:{labels:SL,datasets:[
       {label:'Commercial',data:[44,38,32,36,30,42,28,18],backgroundColor:'#007F91',stack:'s'},
       {label:'Medicare',data:[32,40,38,36,32,28,38,22],backgroundColor:'#1797D7',stack:'s'},
       {label:'Medicare Adv.',data:[14,14,16,14,14,16,18,8],backgroundColor:'#6DC0E0',stack:'s'},
@@ -3707,7 +3740,7 @@ function initSL(t){
     ambSelect('Surgical Svcs',null);
     mkBar('c_amb_vol',AM,[{data:[8640,42800,28400,62400,9840,184000,3640,4200],bg:v=>v>=50000?'#007F91':v>=10000?'#1797D7':'#828889'}],{ycb:v=>v>=1000?Math.round(v/1000)+'K':v,xrot:20});
     mkBar('c_amb_margin',AM,[{data:[28.1,22.2,20.7,20.2,17.2,19.3,-14.0,-12.5],bg:v=>v>=20?'#007F91':v>=10?'#FFC532':'#E24301'},{data:[22.2,22.2,22.2,22.2,22.2,22.2,22.2,22.2],bg:null,bc:'#103454',type:'line'}],{ycb:v=>v+'%',xrot:20});
-    new Chart(document.getElementById('c_amb_trend'),{type:'line',data:{labels:['Q1 FY25','Q2 FY25','Q3 FY25','Q4 FY25','Q1 FY26','Q2 FY26','Q3 FY26'],datasets:[
+    mkChart('c_amb_trend',{type:'line',data:{labels:['Q1 FY25','Q2 FY25','Q3 FY25','Q4 FY25','Q1 FY26','Q2 FY26','Q3 FY26'],datasets:[
       {label:'FY2026',data:[null,null,null,null,24.2,26.8,28.4],borderColor:'#007F91',tension:.3,pointRadius:3,fill:false},
       {label:'FY2025',data:[20.4,22.1,23.6,24.8,null,null,null],borderColor:'#1797D7',borderDash:[4,4],tension:.3,pointRadius:2,fill:false},
       {label:'Budget',data:[22.0,23.5,25.0,26.0,25.4,27.2,29.0],borderColor:'#FFC532',borderDash:[3,3],tension:.3,pointRadius:0,fill:false}
@@ -3716,9 +3749,9 @@ function initSL(t){
   if(t==='sl-supply'){
     buildSupplyTable();
     setTimeout(()=>implantSelect('Orthopedics',document.querySelector('#implant-chips .filter-chip')),50);
-    new Chart(document.getElementById('c_supply_bar'),{type:'bar',data:{labels:['Orthopedics','Oncology','Cardiology','Crit. Care','Surg Svcs','Neurosci.','Other'],datasets:[{label:'Actual',data:[14.2,13.6,10.8,8.4,6.2,5.8,5.8],backgroundColor:'#007F91'},{label:'Budget',data:[13.0,13.0,11.2,8.0,6.4,5.6,5.9],backgroundColor:'rgba(255,197,50,.6)'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:tk,boxWidth:10}}},scales:{x:{ticks:{font:tk}},y:{ticks:{callback:v=>'$'+v+'M',font:tk}}}}});
+    mkChart('c_supply_bar',{type:'bar',data:{labels:['Orthopedics','Oncology','Cardiology','Crit. Care','Surg Svcs','Neurosci.','Other'],datasets:[{label:'Actual',data:[14.2,13.6,10.8,8.4,6.2,5.8,5.8],backgroundColor:'#007F91'},{label:'Budget',data:[13.0,13.0,11.2,8.0,6.4,5.6,5.9],backgroundColor:'rgba(255,197,50,.6)'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:tk,boxWidth:10}}},scales:{x:{ticks:{font:tk}},y:{ticks:{callback:v=>'$'+v+'M',font:tk}}}}});
     mkBar('c_supply_pct',['Crit. Care','Oncology','Surg Svcs','Orthopedics','Cardiology','Neurosci.','Med/Surg'],[{data:[30.4,28.2,27.2,25.9,16.8,13.4,11.8],bg:v=>v>=28?'#E24301':v>=22?'#FFC532':'#007F91'},{data:[22,22,22,22,22,22,22],bg:null,bc:'#103454',type:'line'}],{ycb:v=>v+'%',xrot:20});
-    new Chart(document.getElementById('c_supply_cat'),{type:'bar',data:{labels:['Implants','Pharmacy','Med/Surg supplies','Radiology','Lab reagents','PPE','Other'],datasets:[{label:'Actual',data:[18.4,22.6,10.8,6.2,3.8,1.6,1.4],backgroundColor:'#007F91'},{label:'Budget',data:[17.2,22.4,10.4,6.0,3.6,1.8,1.6],backgroundColor:'rgba(255,197,50,.6)'},{label:'Variance',data:[1.2,0.2,0.4,0.2,0.2,-0.2,-0.2],backgroundColor:'rgba(226,67,1,.7)'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:tk,boxWidth:10}}},scales:{x:{ticks:{font:tk}},y:{ticks:{callback:v=>'$'+v+'M',font:tk}}}}});
+    mkChart('c_supply_cat',{type:'bar',data:{labels:['Implants','Pharmacy','Med/Surg supplies','Radiology','Lab reagents','PPE','Other'],datasets:[{label:'Actual',data:[18.4,22.6,10.8,6.2,3.8,1.6,1.4],backgroundColor:'#007F91'},{label:'Budget',data:[17.2,22.4,10.4,6.0,3.6,1.8,1.6],backgroundColor:'rgba(255,197,50,.6)'},{label:'Variance',data:[1.2,0.2,0.4,0.2,0.2,-0.2,-0.2],backgroundColor:'rgba(226,67,1,.7)'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:tk,boxWidth:10}}},scales:{x:{ticks:{font:tk}},y:{ticks:{callback:v=>'$'+v+'M',font:tk}}}}});
   }
   if(t==='sl-physician'){
     buildPhysCards(PHYS_DATA);
@@ -3727,7 +3760,7 @@ function initSL(t){
     mkBar('c_phys_los',['Q1 (Top)','Q2','Q3','Q4 (Bottom)'],[{data:[0.88,0.98,1.14,1.36],bg:v=>v<=0.95?'#007F91':v<=1.05?'#1797D7':v<=1.15?'#FFC532':'#E24301'},{data:[1,1,1,1],bg:null,bc:'#828889',type:'line'}],{ycb:v=>v.toFixed(2)+'x'});
   }
   if(t==='sl-encounter'){
-    new Chart(document.getElementById('c_enc_trend'),{type:'bar',data:{labels:Mo,datasets:[
+    mkChart('c_enc_trend',{type:'bar',data:{labels:Mo,datasets:[
       {label:'Inpatient',data:[3620,3740,3860,3700,4020,3940,4020,4080,4140,null,null,null],backgroundColor:'#007F91',stack:'s'},
       {label:'Ambulatory',data:[26800,27400,28200,27600,29400,28800,29600,30200,30600,null,null,null],backgroundColor:'#1797D7',stack:'s'},
       {label:'Observation',data:[820,848,876,840,912,896,916,928,944,null,null,null],backgroundColor:'#FFC532',stack:'s'},
@@ -3867,13 +3900,23 @@ function caTab(id,el){
   document.querySelectorAll('#caTabs .tn').forEach(b=>b.classList.remove('active'));
   document.getElementById(id).style.display='';
   el.classList.add('active');
-  if(!R['ca_'+id]){R['ca_'+id]=true;initCA(id);}
+  initCA(id);
 }
 function initCA(t){
   const Mo=['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun'];
   const fac18=['W Med Ctr','N Campus','W Pavilion','N Specialty','Cntrl Med','N Comm','Cntrl Reg','W Outpt','Cntrl Comm','N Behav','E Regional','E Comm','Cntrl Spec','E Outpt','S Med Ctr','S Regional','E Trauma','S Comm'];
+  if(t==='ca-costobj'){
+    mkBar('c_costobj_type',['DRG','Procedure','Physician','Service Line','Dept','Other'],
+      [{data:[1284,24680,18420,16240,14820,8774],bg:v=>v>=15000?'#007F91':v>=8000?'#1797D7':'#828889'}],
+      {ycb:v=>v>=1000?Math.round(v/1000)+'K':v});
+    mkBar('c_costobj_util',['W Med Ctr','N Campus','W Pavilion','N Spec','Cntrl Med','N Comm','Cntrl Reg','W Outpt','Cntrl Comm','N Behav','E Regional','E Comm','Cntrl Spec','E Outpt','S Med Ctr','S Regional','E Trauma','S Comm'],
+      [{data:[99.2,99.0,98.8,98.4,97.8,97.2,96.8,96.4,95.8,95.2,93.4,92.8,91.6,90.4,89.2,88.8,88.6,87.6],
+        bg:v=>v>=99?'#007F91':v>=95?'#FFC532':'#E24301'},
+       {data:Array(18).fill(99),bg:null,bc:'#103454',type:'line'}],
+      {ycb:v=>v+'%',xrot:20,ymin:82,ymax:100});
+  }
   if(t==='ca-gl'){
-    new Chart(document.getElementById('c_gl_monthly'),{type:'bar',data:{labels:Mo,datasets:[
+    mkChart('c_gl_monthly',{type:'bar',data:{labels:Mo,datasets:[
       {label:'Labor',data:[17.8,18.2,18.6,17.4,19.2,18.8,19.2,19.4,null,null,null,null],backgroundColor:'#007F91',stack:'s'},
       {label:'Supplies',data:[6.8,7.0,7.2,6.8,7.4,7.2,7.4,7.6,null,null,null,null],backgroundColor:'#1797D7',stack:'s'},
       {label:'Purch. Svcs',data:[4.0,4.2,4.4,4.0,4.6,4.4,4.6,4.8,null,null,null,null],backgroundColor:'#FFC532',stack:'s'},
@@ -3883,20 +3926,20 @@ function initCA(t){
       [{data:[99.8,99.4,99.2,99.0,98.8,98.4,98.2,97.8,97.2,96.8,96.4,95.8,95.4,94.8,94.2,93.6,93.0,92.4],bg:v=>v>=98?'#007F91':v>=96?'#FFC532':'#E24301'},
        {data:Array(18).fill(99.0),bg:null,bc:'#103454',type:'line'}],
       {ycb:v=>v+'%',xrot:20,ymin:90,ymax:100});
-    new Chart(document.getElementById('c_gl_cat'),{type:'bar',data:{
+    mkChart('c_gl_cat',{type:'bar',data:{
       labels:['Salaries','Benefits','Supplies','Pharmacy','Purch Svcs','Deprec.','Overhead','Implants','Other'],
       datasets:[
         {label:'Actual',data:[128.4,35.0,28.4,22.6,38.4,18.4,22.8,10.6,7.8],backgroundColor:'#007F91'},
         {label:'Budget',data:[124.8,34.0,28.0,22.4,36.8,18.6,22.4,9.8,7.4],backgroundColor:'rgba(255,197,50,.6)'}
       ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:tk,boxWidth:10}}},scales:{x:{ticks:{font:tk,maxRotation:20}},y:{ticks:{callback:v=>'$'+v+'M',font:tk}}}}});
-    new Chart(document.getElementById('c_gl_labor'),{type:'line',data:{labels:['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'],datasets:[
+    mkChart('c_gl_labor',{type:'line',data:{labels:['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'],datasets:[
       {label:'System',data:[51.4,51.6,51.8,51.2,52.0,52.2,52.4,52.4,52.3],borderColor:'#007F91',tension:.3,pointRadius:3,fill:false},
       {label:'Natl benchmark',data:[50.8,50.8,50.8,50.8,50.8,50.8,50.8,50.8,50.8],borderColor:'#FFC532',borderDash:[4,4],pointRadius:0,fill:false},
       {label:'Budget target',data:[51.0,51.0,51.0,51.0,51.0,51.0,51.0,51.0,51.0],borderColor:'#E24301',borderDash:[3,3],pointRadius:0,fill:false}
     ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:tk,boxWidth:10}}},scales:{y:{min:49,max:54,ticks:{callback:v=>v+'%',font:tk}},x:{ticks:{font:tk}}}}});
   }
   if(t==='ca-objects'){
-    new Chart(document.getElementById('c_obj_type'),{type:'bar',data:{
+    mkChart('c_obj_type',{type:'bar',data:{
       labels:['Dept. cost ctrs','Physician offices','Procedure codes','Diagnosis codes','Supply items','Revenue codes','Patient accounts','Contract terms'],
       datasets:[
         {label:'Count (thousands)',data:[1.8,0.4,12.4,18.6,22.8,8.4,14.2,5.6],backgroundColor:'#007F91',yAxisID:'y'},
@@ -3912,14 +3955,14 @@ function initCA(t){
       {ycb:v=>v+'%',xrot:20,ymin:82,ymax:100});
   }
   if(t==='ca-classify'){
-    new Chart(document.getElementById('c_class_sl'),{type:'bar',data:{
+    mkChart('c_class_sl',{type:'bar',data:{
       labels:['Cardiology','Orthopedics','Oncology','Neurosci.','Med/Surg','Critical Care',"Women's",'Psych/BH'],
       datasets:[
         {label:'Direct',data:[28.4,24.6,22.8,19.2,26.4,14.2,15.8,10.4],backgroundColor:'#007F91',stack:'s'},
         {label:'Indirect',data:[9.4,8.4,7.8,8.2,10.2,5.2,5.6,4.8],backgroundColor:'#1797D7',stack:'s'},
         {label:'Overhead',data:[5.5,5.6,4.8,5.7,6.2,3.0,3.4,2.7],backgroundColor:'rgba(255,197,50,.6)',stack:'s'}
       ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:tk,boxWidth:10}}},scales:{x:{stacked:true,ticks:{font:tk,maxRotation:20}},y:{stacked:true,ticks:{callback:v=>'$'+v+'M',font:tk}}}}});
-    new Chart(document.getElementById('c_class_direct'),{type:'bar',data:{
+    mkChart('c_class_direct',{type:'bar',data:{
       labels:['Implants','Pharmacy','Med/surg','Benefits','Salaries','Depreciation','Purch Svcs','Other ops','Overhead'],
       datasets:[
         {label:'System direct %',data:[98.1,94.7,94.4,73.1,73.4,34.8,38.5,28.2,0.0],backgroundColor:function(ctx){const v=ctx.raw;return v>=70?'#007F91':v>=40?'#FFC532':'#E24301';}},
@@ -3927,7 +3970,7 @@ function initCA(t){
       ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:tk,boxWidth:10}}},scales:{x:{ticks:{font:tk,maxRotation:20}},y:{max:100,ticks:{callback:v=>v+'%',font:tk}}}}});
   }
   if(t==='ca-alloc'){
-    new Chart(document.getElementById('c_alloc_flow'),{type:'bar',data:{
+    mkChart('c_alloc_flow',{type:'bar',data:{
       labels:['Admin','Facilities','IT','Env Svcs','Purch Svcs','Other 18','Central Sterile','HR','Finance','Med Records','Risk Mgmt','Laundry'],
       datasets:[
         {label:'Allocated out',data:[41.4,22.8,18.2,12.4,11.2,59.2,7.8,8.6,6.4,4.8,3.6,2.4],backgroundColor:'#007F91'},
@@ -3940,11 +3983,11 @@ function initCA(t){
   }
   if(t==='ca-unitcost'){
     const SL=['Cardiology','Orthopedics','Oncology','Neurosci.','Med/Surg','Critical Care',"Women's",'Psych/BH'];
-    new Chart(document.getElementById('c_uc_discharge'),{type:'bar',data:{labels:SL,datasets:[
+    mkChart('c_uc_discharge',{type:'bar',data:{labels:SL,datasets:[
       {label:'System cost/discharge',data:[8984,11914,16238,9093,2347,13659,3636,4345],backgroundColor:function(ctx){const v=ctx.raw,n=[9200,12400,16800,9600,2600,14200,3800,4800][ctx.dataIndex];return v<=n?'#007F91':'#E24301';}},
       {label:'Natl median',data:[9200,12400,16800,9600,2600,14200,3800,4800],backgroundColor:'rgba(255,197,50,.5)'}
     ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:tk,boxWidth:10}}},scales:{x:{ticks:{font:tk,maxRotation:20}},y:{ticks:{callback:v=>'$'+v.toLocaleString(),font:tk}}}}});
-    new Chart(document.getElementById('c_uc_trend'),{type:'line',data:{labels:['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'],datasets:[
+    mkChart('c_uc_trend',{type:'line',data:{labels:['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'],datasets:[
       {label:'System',data:[7124,7086,7048,7192,6968,6944,6920,6952,6988],borderColor:'#007F91',tension:.3,pointRadius:3,fill:false},
       {label:'Natl median',data:[7240,7240,7240,7240,7240,7240,7240,7240,7240],borderColor:'#FFC532',borderDash:[4,4],pointRadius:0,fill:false},
       {label:'Budget',data:[7100,7080,7060,7040,7020,7000,6980,6960,6940],borderColor:'#1797D7',borderDash:[3,3],pointRadius:0,fill:false}
@@ -3954,15 +3997,15 @@ function initCA(t){
     mkBar('c_pat_dist',['<$2K','$2K-$5K','$5K-$10K','$10K-$20K','$20K-$40K','$40K-$80K','>$80K'],
       [{data:[6200,12400,11800,7400,4200,1800,900],bg:v=>v>=10000?'#007F91':v>=5000?'#1797D7':'#828889'}],
       {ycb:v=>v>=1000?Math.round(v/1000)+'K':v});
-    new Chart(document.getElementById('c_pat_margin'),{type:'bar',data:{labels:['Cardiology','Orthopedics','Oncology','Neurosci.','Med/Surg',"Women's",'Crit. Care','Psych/BH'],datasets:[
+    mkChart('c_pat_margin',{type:'bar',data:{labels:['Cardiology','Orthopedics','Oncology','Neurosci.','Med/Surg',"Women's",'Crit. Care','Psych/BH'],datasets:[
       {label:'Actual',data:[4316,4996,5872,2775,635,968,3170,-753],backgroundColor:function(ctx){return ctx.raw>=0?'#007F91':'#E24301';}},
       {label:'Budget',data:[4200,4800,5600,2600,600,900,3000,-600],backgroundColor:'rgba(255,197,50,.5)'}
     ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:tk,boxWidth:10}}},scales:{x:{ticks:{font:tk,maxRotation:20}},y:{ticks:{callback:v=>'$'+v.toLocaleString(),font:tk}}}}});
-    new Chart(document.getElementById('c_pat_payer'),{type:'bar',data:{labels:['Commercial','Medicare','Medicare Adv.','Medicaid','Self-pay'],datasets:[
+    mkChart('c_pat_payer',{type:'bar',data:{labels:['Commercial','Medicare','Medicare Adv.','Medicaid','Self-pay'],datasets:[
       {label:'Net revenue/case',data:[12400,8200,7800,4200,2800],backgroundColor:'#007F91'},
       {label:'Total cost/case',data:[7800,7200,7400,6800,8400],backgroundColor:'rgba(226,67,1,.7)'}
     ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:tk,boxWidth:10}}},scales:{x:{ticks:{font:tk}},y:{ticks:{callback:v=>'$'+v.toLocaleString(),font:tk}}}}});
-    new Chart(document.getElementById('c_pat_pareto'),{type:'bar',data:{labels:['Top 1%','2-5%','6-10%','11-20%','21-40%','41-60%','61-80%','Bottom 20%'],datasets:[
+    mkChart('c_pat_pareto',{type:'bar',data:{labels:['Top 1%','2-5%','6-10%','11-20%','21-40%','41-60%','61-80%','Bottom 20%'],datasets:[
       {label:'% of total cost',data:[18,24,16,14,12,8,5,3],backgroundColor:'#007F91',yAxisID:'y'},
       {label:'Cumulative %',data:[18,42,58,72,84,92,97,100],type:'line',borderColor:'#FFC532',pointRadius:3,fill:false,yAxisID:'y2'}
     ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:tk,boxWidth:10}}},scales:{
@@ -3983,7 +4026,7 @@ function patSub(id,el){
 }
 
 function initPatCohort(){
-  new Chart(document.getElementById('c_cohort_scatter'),{type:'scatter',data:{datasets:[
+  mkChart('c_cohort_scatter',{type:'scatter',data:{datasets:[
     {label:'Critical Care',data:[{x:50000,y:18.4},{x:42800,y:4.2}],backgroundColor:'#E24301',pointRadius:8},
     {label:'Orthopedics',data:[{x:29032,y:3.8},{x:23944,y:11.8}],backgroundColor:'#1797D7',pointRadius:8},
     {label:'Psych/BH',data:[{x:14634,y:38.4},{x:7300,y:26.0}],backgroundColor:'#FFC532',pointRadius:8},
