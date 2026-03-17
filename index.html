@@ -3012,13 +3012,13 @@ function navTo(id,el){
 function dashTab(id,el){
   document.querySelectorAll('.dtab').forEach(t=>t.style.display='none');
   document.querySelectorAll('.tn').forEach(b=>b.classList.remove('active'));
-  document.getElementById(id).style.display='';
+  document.getElementById(id).style.display='block';
   el.classList.add('active');
   initDash(id);
 }
 function facTab(id,el){
   ['fa','ft','fl'].forEach(s=>{const e=document.getElementById(s);if(e)e.style.display='none';});
-  document.getElementById(id).style.display='';
+  document.getElementById(id).style.display='block';
   document.querySelectorAll('#fac .st').forEach(b=>b.classList.remove('active'));
   el.classList.add('active');
   if(!R['fac_'+id]&&id==='fa')buildFacCharts();
@@ -3687,7 +3687,7 @@ function initEncObs(){
 function slTab(id,el){
   document.querySelectorAll('.sltab').forEach(t=>t.style.display='none');
   document.querySelectorAll('#slTabs .tn').forEach(b=>b.classList.remove('active'));
-  document.getElementById(id).style.display='';
+  document.getElementById(id).style.display='block';
   el.classList.add('active');
   initSL(id);
 }
@@ -3865,7 +3865,7 @@ navTo=function(id,el){
   _baseNavTo(id,el);
   if(id==='serviceline'&&!R['sl_sl-overview']){
     R['sl_sl-overview']=true;
-    document.getElementById('sl-overview').style.display='';
+    document.getElementById('sl-overview').style.display='block';
     initSL('sl-overview');
   }
 };
@@ -3887,7 +3887,7 @@ function caTab(id,el){
   document.querySelectorAll('.catab').forEach(t=>t.style.display='none');
   document.querySelectorAll('#caTabs .tn').forEach(b=>b.classList.remove('active'));
   const tabEl=document.getElementById(id);
-  if(tabEl) tabEl.style.display='';
+  if(tabEl) tabEl.style.display='block';
   if(el) el.classList.add('active');
   initCA(id);
 }
@@ -4218,7 +4218,7 @@ navTo=function(id,el){
     document.querySelectorAll('#caTabs .tn').forEach(b=>b.classList.remove('active'));
     const glTab=document.getElementById('ca-gl');
     const firstBtn=document.querySelector('#caTabs .tn');
-    if(glTab) glTab.style.display='';
+    if(glTab) glTab.style.display='block';
     if(firstBtn) firstBtn.classList.add('active');
     initCA('ca-gl');
   }
@@ -6023,7 +6023,7 @@ const Mo9  = ['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'];
 function fcTab(id, el) {
   document.querySelectorAll('.fctab').forEach(t => t.style.display = 'none');
   document.querySelectorAll('#fcTabs .tn').forEach(b => b.classList.remove('active'));
-  document.getElementById(id).style.display = '';
+  document.getElementById(id).style.display = 'block';
   el.classList.add('active');
   if (!R['fc_' + id]) { R['fc_' + id] = true; fcInitTab(id); }
 }
@@ -6816,7 +6816,7 @@ navTo = function(id, el) {
     setTimeout(() => {
       // Show first tab
       const firstTab = document.getElementById('fc-projections');
-      if (firstTab) firstTab.style.display = '';
+      if (firstTab) firstTab.style.display = 'block';
       if (!R['fc_fc-projections']) {
         R['fc_fc-projections'] = true;
         fcInitProjections();
@@ -6965,7 +6965,7 @@ let bgtCapFilterActive = 'all';
 function bgtTab(id, el) {
   document.querySelectorAll('.bgttab').forEach(t=>t.style.display='none');
   document.querySelectorAll('#bgtTabs .tn').forEach(b=>b.classList.remove('active'));
-  document.getElementById(id).style.display='';
+  document.getElementById(id).style.display='block';
   if(el) el.classList.add('active');
   if(!R['bgt_'+id]){R['bgt_'+id]=true;bgtInitTab(id);}
 }
@@ -7686,7 +7686,7 @@ navTo=function(id,el){
     R['bgt_init']=true;
     setTimeout(()=>{
       const first=document.getElementById('bgt-summary');
-      if(first)first.style.display='';
+      if(first)first.style.display='block';
       if(!R['bgt_bgt-summary']){R['bgt_bgt-summary']=true;bgtInitSummary();}
     },60);
   }
