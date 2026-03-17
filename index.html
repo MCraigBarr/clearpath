@@ -580,27 +580,6 @@ select{font-family:var(--fs);padding:5px 8px;font-size:12px;border:1px solid #C8
     <button class="tn" onclick="caTab('ca-patient',this)">Patient Analytics</button>
   </div>
 
-  <!-- TAB 1: GL EXPENSE CAPTURE -->
-  <div id="ca-costobj" class="catab" style="display:none;">
-    <div class="sqt">Cost objects define the units to which costs are assigned — DRGs, procedures, physician encounters, and service lines. The system tracks 84,218 active cost objects across 18 facilities with a 98.4% capture rate.</div>
-    <div class="four" style="margin-bottom:14px;">
-      <div class="mc b"><div class="ml">Active cost objects</div><div class="mv">84,218</div><div class="md up">↑ 2,140 added YTD</div></div>
-      <div class="mc b"><div class="ml">DRG cost objects</div><div class="mv">1,284</div><div class="md">Active DRG groups</div></div>
-      <div class="mc y"><div class="ml">Utilization rate</div><div class="mv am">94.2%</div><div class="md">System avg vs 99% target</div></div>
-      <div class="mc o"><div class="ml">Inactive objects</div><div class="mv dn2">4,860</div><div class="md dn2">Pending cleanup review</div></div>
-    </div>
-    <div class="two">
-      <div class="card">
-        <div class="ct" style="margin-bottom:8px;">Cost objects by type — active vs inactive</div>
-        <div class="cw" style="height:240px;"><canvas id="c_costobj_type"></canvas></div>
-      </div>
-      <div class="card">
-        <div class="ct" style="margin-bottom:8px;">Utilization rate by facility (%) — target 99%</div>
-        <div class="cw" style="height:240px;"><canvas id="c_costobj_util"></canvas></div>
-      </div>
-    </div>
-  </div>
-
   <div id="ca-gl" class="catab">
     <div class="five">
       <div class="mc b"><div class="ml">Total GL expenses</div><div class="mv">$312.4M</div><div class="md up">&#8593; 3.8% vs PY</div><div class="mn">Budget $308.2M <span class="vn">+$4.2M unfav</span></div></div>
@@ -950,7 +929,8 @@ select{font-family:var(--fs);padding:5px 8px;font-size:12px;border:1px solid #C8
         <div class="card-hdr"><div class="ct">Top DRGs by volume and contribution margin &mdash; click to drill</div></div>
         <div id="drg-table-wrap">
         <table id="drg-table">
-          <tr><th>DRG</th><th>Description</th><th>SVC Line</th><th style="text-align:right;">Cases</th><th style="text-align:right;">Gross charges</th><th style="text-align:right;">Net rev/case</th><th style="text-align:right;">Cost/case</th><th style="text-align:right;">Margin/case</th><th style="text-align:right;">Margin %</th><th style="text-align:right;">Avg LOS</th><th>vs Natl</th></tr>
+          <thead><tr><th>DRG</th><th>Description</th><th>SVC Line</th><th style="text-align:right;">Cases</th><th style="text-align:right;">Net rev/case</th><th style="text-align:right;">Cost/case</th><th style="text-align:right;">Margin/case</th><th style="text-align:right;">Margin %</th><th style="text-align:right;">Avg LOS</th><th>Status</th></tr></thead>
+          <tbody id="drg-table-body"><!-- populated by initPatDRG --></tbody>
           <tr onclick="showDRGDrill('470','Major Joint Replacement','Orthopedics',3240)" style="cursor:pointer;"><td class="vp"><strong>470</strong></td><td>Major joint replacement w/o MCC</td><td>Orthopedics</td><td style="text-align:right;">3,240</td><td style="text-align:right;">$54.8M</td><td style="text-align:right;">$16,910</td><td style="text-align:right;" class="vp">$11,914</td><td style="text-align:right;" class="vp">$4,996</td><td style="text-align:right;" class="vp">29.6%</td><td style="text-align:right;">2.9</td><td><span class="badge bg">+2.1d faster</span></td></tr>
           <tr onclick="showDRGDrill('291','HF & Shock','Cardiology',1840)" style="cursor:pointer;"><td class="vp"><strong>291</strong></td><td>Heart failure &amp; shock w MCC</td><td>Cardiology</td><td style="text-align:right;">1,840</td><td style="text-align:right;">$48.2M</td><td style="text-align:right;">$26,200</td><td style="text-align:right;" class="am">$19,840</td><td style="text-align:right;" class="vp">$6,360</td><td style="text-align:right;" class="vp">24.3%</td><td style="text-align:right;">5.4</td><td><span class="badge ba">On target</span></td></tr>
           <tr onclick="showDRGDrill('871','Sepsis','Med/Surg',2840)" style="cursor:pointer;"><td class="am"><strong>871</strong></td><td>Septicemia or severe sepsis w MV</td><td>Med/Surg</td><td style="text-align:right;">2,840</td><td style="text-align:right;">$38.4M</td><td style="text-align:right;">$13,520</td><td style="text-align:right;" class="am">$11,880</td><td style="text-align:right;" class="am">$1,640</td><td style="text-align:right;" class="am">12.1%</td><td style="text-align:right;">9.8</td><td><span class="badge ba">+1.4d longer</span></td></tr>
@@ -1591,6 +1571,14 @@ select{font-family:var(--fs);padding:5px 8px;font-size:12px;border:1px solid #C8
           <div class="ct" style="margin-bottom:8px;">Revenue per encounter by service line — actual vs expected ($)</div>
           <div class="cw" style="height:210px;"><canvas id="c_enc_rev"></canvas></div>
         </div>
+      </div>
+      <div class="card">
+        <div class="ct" style="margin-bottom:8px;">Top DRGs by net revenue contribution ($M)</div>
+        <div class="cw" style="height:200px;"><canvas id="c_drg"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="ct" style="margin-bottom:8px;">Top DRGs by net revenue contribution ($M) — inpatient volume drivers</div>
+        <div class="cw" style="height:240px;"><canvas id="c_drg"></canvas></div>
       </div>
       <div class="card">
         <div class="ct" style="margin-bottom:10px;">Encounter-level P&amp;L by care setting and payer</div>
@@ -3898,23 +3886,14 @@ document.addEventListener('DOMContentLoaded', function() {
 function caTab(id,el){
   document.querySelectorAll('.catab').forEach(t=>t.style.display='none');
   document.querySelectorAll('#caTabs .tn').forEach(b=>b.classList.remove('active'));
-  document.getElementById(id).style.display='';
-  el.classList.add('active');
+  const tabEl=document.getElementById(id);
+  if(tabEl) tabEl.style.display='';
+  if(el) el.classList.add('active');
   initCA(id);
 }
 function initCA(t){
   const Mo=['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun'];
   const fac18=['W Med Ctr','N Campus','W Pavilion','N Specialty','Cntrl Med','N Comm','Cntrl Reg','W Outpt','Cntrl Comm','N Behav','E Regional','E Comm','Cntrl Spec','E Outpt','S Med Ctr','S Regional','E Trauma','S Comm'];
-  if(t==='ca-costobj'){
-    mkBar('c_costobj_type',['DRG','Procedure','Physician','Service Line','Dept','Other'],
-      [{data:[1284,24680,18420,16240,14820,8774],bg:v=>v>=15000?'#007F91':v>=8000?'#1797D7':'#828889'}],
-      {ycb:v=>v>=1000?Math.round(v/1000)+'K':v});
-    mkBar('c_costobj_util',['W Med Ctr','N Campus','W Pavilion','N Spec','Cntrl Med','N Comm','Cntrl Reg','W Outpt','Cntrl Comm','N Behav','E Regional','E Comm','Cntrl Spec','E Outpt','S Med Ctr','S Regional','E Trauma','S Comm'],
-      [{data:[99.2,99.0,98.8,98.4,97.8,97.2,96.8,96.4,95.8,95.2,93.4,92.8,91.6,90.4,89.2,88.8,88.6,87.6],
-        bg:v=>v>=99?'#007F91':v>=95?'#FFC532':'#E24301'},
-       {data:Array(18).fill(99),bg:null,bc:'#103454',type:'line'}],
-      {ycb:v=>v+'%',xrot:20,ymin:82,ymax:100});
-  }
   if(t==='ca-gl'){
     mkChart('c_gl_monthly',{type:'bar',data:{labels:Mo,datasets:[
       {label:'Labor',data:[17.8,18.2,18.6,17.4,19.2,18.8,19.2,19.4,null,null,null,null],backgroundColor:'#007F91',stack:'s'},
@@ -4021,10 +4000,39 @@ function patSub(id,el){
   document.querySelectorAll('#patSubTabs .st').forEach(b=>b.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   el.classList.add('active');
-  if(id==='pat-cohort'&&!R['pcs']){R['pcs']=true;initPatCohort();}
-  if(id==='pat-drg'&&!R['pdrg']){R['pdrg']=true;}
+  if(id==='pat-cohort') initPatCohort();
+  if(id==='pat-drg') initPatDRG();
 }
 
+function initPatDRG(){
+  const tbody = document.getElementById('drg-table-body');
+  if(!tbody || tbody.children.length > 0) { if(typeof filterDRG==='function') filterDRG(''); return; }
+  const DRG_ROWS=[
+    {drg:'470',desc:'Major Joint Replacement w/o MCC',sl:'Orthopedics',cases:3240,revCase:16910,costCase:11914,margin:4996,marg_pct:29.6,los:2.9,flag:'bg'},
+    {drg:'291',desc:'Heart Failure & Shock w MCC',sl:'Cardiology',cases:820,revCase:18200,costCase:16800,margin:1400,marg_pct:7.7,los:5.8,flag:'ba'},
+    {drg:'460',desc:'Spinal Fusion except Cervical w/o MCC',sl:'Orthopedics',cases:640,revCase:24800,costCase:18600,margin:6200,marg_pct:25.0,los:2.4,flag:'bg'},
+    {drg:'807',desc:'Major Depression & Other Mood Disorders w/o MCC',sl:'Psych/BH',cases:1840,revCase:3592,costCase:4345,margin:-753,marg_pct:-20.9,los:12.4,flag:'br'},
+    {drg:'064',desc:'Intracranial Hemorrhage w MCC',sl:'Neurosciences',cases:380,revCase:32400,costCase:26800,margin:5600,marg_pct:17.3,los:7.2,flag:'ba'},
+    {drg:'247',desc:'Perc Cardiovascular Proc w Drug-Eluting Stent',sl:'Cardiology',cases:1240,revCase:22400,costCase:14800,margin:7600,marg_pct:33.9,los:2.1,flag:'bg'},
+    {drg:'871',desc:'Septicemia w/o MV >96 hrs w MCC',sl:'Critical Care',cases:1640,revCase:16829,costCase:13659,margin:3170,marg_pct:18.8,los:8.6,flag:'ba'},
+    {drg:'683',desc:'Renal Failure w CC',sl:'Med/Surg',cases:2840,revCase:7200,costCase:5800,margin:1400,marg_pct:19.4,los:4.2,flag:'bg'},
+    {drg:'392',desc:'Esophagitis, Gastroent & Misc Digest Disorders w/o MCC',sl:'Med/Surg',cases:3640,revCase:4800,costCase:3900,margin:900,marg_pct:18.8,los:3.1,flag:'bg'},
+    {drg:'190',desc:'Chronic Obstructive Pulmonary Disease w MCC',sl:'Med/Surg',cases:1280,revCase:9800,costCase:8200,margin:1600,marg_pct:16.3,los:5.4,flag:'ba'},
+  ];
+  tbody.innerHTML=DRG_ROWS.map(d=>`<tr style="cursor:pointer;" onmouseover="this.style.background='#f0f8f9'" onmouseout="this.style.background=''">
+    <td style="padding:7px 10px;font-family:var(--fp);font-weight:600;color:#007F91;">${d.drg}</td>
+    <td style="padding:7px 10px;">${d.desc}</td>
+    <td style="padding:7px 10px;"><span style="font-size:10px;padding:1px 7px;border-radius:3px;background:#E0F3FB;color:#103454;">${d.sl}</span></td>
+    <td style="text-align:right;padding:7px 10px;">${d.cases.toLocaleString()}</td>
+    <td style="text-align:right;padding:7px 10px;">$${d.revCase.toLocaleString()}</td>
+    <td style="text-align:right;padding:7px 10px;" class="${d.costCase>d.revCase*0.85?'vn':'vp'}">$${d.costCase.toLocaleString()}</td>
+    <td style="text-align:right;padding:7px 10px;" class="${d.margin>=0?'vp':'vn'}">$${d.margin.toLocaleString()}</td>
+    <td style="text-align:right;padding:7px 10px;" class="${d.marg_pct>=20?'vp':d.marg_pct>=0?'am':'vn'}">${d.marg_pct.toFixed(1)}%</td>
+    <td style="text-align:right;padding:7px 10px;">${d.los}</td>
+    <td style="padding:7px 10px;"><span class="badge ${d.flag}">${d.flag==='bg'?'On target':d.flag==='ba'?'Monitor':'Review'}</span></td>
+  </tr>`).join('');
+  if(typeof filterDRG==='function') filterDRG('');
+}
 function initPatCohort(){
   mkChart('c_cohort_scatter',{type:'scatter',data:{datasets:[
     {label:'Critical Care',data:[{x:50000,y:18.4},{x:42800,y:4.2}],backgroundColor:'#E24301',pointRadius:8},
@@ -4205,9 +4213,13 @@ function filterDRG(){
 const _prevNavTo=navTo;
 navTo=function(id,el){
   _prevNavTo(id,el);
-  if(id==='cost'&&!R['ca_ca-gl']){
-    R['ca_ca-gl']=true;
-    document.getElementById('ca-gl').style.display='';
+  if(id==='cost'){
+    document.querySelectorAll('.catab').forEach(t=>t.style.display='none');
+    document.querySelectorAll('#caTabs .tn').forEach(b=>b.classList.remove('active'));
+    const glTab=document.getElementById('ca-gl');
+    const firstBtn=document.querySelector('#caTabs .tn');
+    if(glTab) glTab.style.display='';
+    if(firstBtn) firstBtn.classList.add('active');
     initCA('ca-gl');
   }
 };
